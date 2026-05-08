@@ -96,7 +96,7 @@
         .correct { background-color: #538d4e !important; }
         .incorrect { background-color: #d32f2f !important; }
         
-        /* --- PANEL VICTORIA / ESPERA --- */
+        /* --- PANEL VICTORIA --- */
         #victory-panel { 
             display: none; background: linear-gradient(145deg, #1e1e20 0%, #121213 100%); 
             border: 2px solid #00ff88; border-radius: 20px; padding: 30px; 
@@ -136,7 +136,7 @@
         /* Made By en Juego (muy sutil) */
         .footer-game { margin-top: 40px; padding: 20px 0; color: #444; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
         .footer-game span { color: #555; font-weight: 600; }
-        .funny-motto-footer { margin-bottom: 8px; font-style: italic; color: #666; }
+        .funny-motto-footer { margin-bottom: 8px; font-style: italic; color: #666; text-transform: none; letter-spacing: normal; font-size: 0.85rem;}
     </style>
 </head>
 <body>
@@ -165,8 +165,8 @@
     <div id="game-content">
         <div class="header-container">
             <h1>FutGuess <span id="diff-badge" style="font-size: 0.75rem; vertical-align: middle; padding: 3px 8px; border-radius: 5px; margin-left: 10px; color: white; text-shadow: none;"></span></h1>
-            <p class="subtitle">Adivina al crack mundial en tiempo récord.</p>
-            <p class="rules-text">Nuevo jugador cada <span>15 MINUTOS</span></p>
+            <p class="subtitle">Adivina al crack mundial de las 5 grandes ligas en tiempo récord.</p>
+            <p class="rules-text">Nuevo jugador en <span>CADA PARTIDA</span></p>
         </div>
 
         <div id="stopwatch">00:00.0</div>
@@ -191,11 +191,6 @@
             <div class="victory-actions">
                 <button id="share-btn-container" class="btn-share" onclick="shareToWhatsApp()">Compartir en WhatsApp 📱</button>
                 <button class="btn-change-diff" onclick="backToMenu()">🔄 Cambiar Dificultad</button>
-            </div>
-
-            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #3a3a3c; text-align: center;">
-                <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
-                <div id="cooldown-timer" style="font-size: 1.8rem; color: #00ff88; font-weight: 900;">00:00</div>
             </div>
         </div>
 
@@ -237,7 +232,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // LLAVE MAESTRA PRO
         const DB_KEY = "fg_pro_final_v1_"; 
 
         let targetPlayer = null; let startTime = null; let timerInterval = null;
@@ -245,7 +239,6 @@
         let gameOver = false; let guessedIds = [];
         let isTimerRunning = false; let selectedDifficulty = "";
         let finalGameTime = 0; 
-        const msPerWindow = 1000 * 60 * 15;
 
         const frasesVictoria = ["¡Tienes más ojo que un ojeador del City!", "Ni el VAR te quita esta victoria.", "¡Fichaje estrella detectado!", "¡Estás para dirigir a la Selección!", "Sabes más de fútbol que Maldini.", "¡Qué clase! Pareces el 10 clásico."];
         const frasesTrampa = ["Ese tiempo es humanamente imposible.", "El VAR ha detectado una trampa evidente.", "Tus datos son más falsos que un penal contra el local.", "¡Pillado! No seas como el Lean porfa."];
@@ -295,12 +288,15 @@
             badge.innerText = diff;
             badge.style.backgroundColor = { "Fácil": "#538d4e", "Normal": "#b59f3b", "Difícil": "#d32f2f" }[diff];
 
-            if (localStorage.getItem(`${DB_KEY}played_${selectedDifficulty}`) == getWindowIndex()) {
-                showLockoutScreen();
-            } else {
-                initSession();
-            }
+            initSession();
             listenToGlobalLeaderboard(diff); 
+        }
+
+        // --- SISTEMA ALEATORIO 100% ---
+        function selectTarget() {
+            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
+            // Elige un jugador completamente al azar en cada intento
+            return filtered[Math.floor(Math.random() * filtered.length)];
         }
 
         function initSession() {
@@ -317,45 +313,6 @@
             document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("empty-state").style.display = "block";
             document.getElementById("player-input").focus();
-            startCooldownTimer();
-        }
-
-        function showLockoutScreen() {
-            document.getElementById("input-wrapper").style.display = "none";
-            document.getElementById("stopwatch").style.display = "none";
-            document.getElementById("board-container").style.display = "none";
-            const vPanel = document.getElementById("victory-panel");
-            vPanel.style.display = "block";
-            vPanel.style.borderColor = "#00ff88";
-            document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
-            document.getElementById("victory-title").style.color = "#00ff88";
-            document.getElementById("victory-phrase").innerText = "Ya jugaste esta dificultad. El crack fue:";
-            const lastPlayer = localStorage.getItem(`${DB_KEY}lp_${selectedDifficulty}`) || "???";
-            const lastClub = localStorage.getItem(`${DB_KEY}lc_${selectedDifficulty}`) || "";
-            const streak = localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0";
-            document.getElementById("victory-player-name").innerText = lastPlayer;
-            document.getElementById("victory-player-name").style.color = "#00ff88";
-            document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
-            document.getElementById("victory-time").innerText = "";
-            document.getElementById("share-btn-container").style.display = "none";
-            if (lastClub) {
-                const clean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
-                document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
-            }
-            startCooldownTimer();
-        }
-
-        function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
-
-        function startCooldownTimer() {
-            if (window.cdInt) clearInterval(window.cdInt);
-            window.cdInt = setInterval(() => {
-                const diff = ((getWindowIndex() + 1) * msPerWindow) - Date.now();
-                if (diff <= 0) { clearInterval(window.cdInt); location.reload(); return; }
-                const m = Math.floor((diff / 1000 / 60) % 60);
-                const s = Math.floor((diff / 1000) % 60);
-                document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            }, 1000);
         }
 
         function makeGuess(guessed) {
@@ -367,20 +324,13 @@
             document.getElementById("player-input").value = "";
         }
 
-        function selectTarget() {
-            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
-            const windowIdx = getWindowIndex();
-            let seed = (windowIdx * 16807) % 2147483647;
-            return filtered[seed % filtered.length];
-        }
-
         function endGame() {
             gameOver = true; clearInterval(timerInterval);
             document.getElementById("player-input").disabled = true;
             finalGameTime = (Date.now() - startTime) / 1000; 
             const vPanel = document.getElementById("victory-panel");
 
-            // --- TRAMPOSO ---
+            // --- TRAMPA ---
             if (finalGameTime < 4.5 && guessedIds.length === 1) {
                 const audio = document.getElementById("audio-trampa");
                 audio.load(); audio.play().catch(() => {});
@@ -393,7 +343,6 @@
                 document.getElementById("victory-player-name").innerText = "¡No seas como el Lean porfa!";
                 document.getElementById("victory-player-name").style.color = "#ffaa00";
                 document.getElementById("share-btn-container").style.display = "none";
-                localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
                 return;
             }
 
@@ -404,9 +353,6 @@
 
             let streak = parseInt(localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0") + 1;
             localStorage.setItem(`${DB_KEY}st_${selectedDifficulty}`, streak);
-            localStorage.setItem(`${DB_KEY}lp_${selectedDifficulty}`, targetPlayer.fullName);
-            localStorage.setItem(`${DB_KEY}lc_${selectedDifficulty}`, targetPlayer.club);
-            localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
 
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
             document.getElementById("victory-title").innerText = "¡VICTORIA!";
