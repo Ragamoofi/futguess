@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FutGuess: Speed Challenge</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+
     <style>
         /* --- ESTILOS BASE --- */
         body { 
@@ -80,29 +83,34 @@
             font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
-        #board-container { width: 100%; margin-top: 10px; overflow-x: auto; }
+        #board-container { width: 100%; margin-top: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .row-header { display: grid; grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; gap: 8px; margin-bottom: 10px; min-width: 650px; font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 800; }
-        #board-wrapper { background: rgba(30, 30, 32, 0.3); border: 2px dashed #3a3a3c; border-radius: 12px; padding: 15px; min-height: 100px; display: flex; flex-direction: column; gap: 15px; position: relative; }
-        .empty-state { color: #555; font-size: 0.9rem; padding: 40px 0; text-align: center; font-style: italic; }
+        #board-wrapper { background: rgba(30, 30, 32, 0.3); border: 2px dashed #3a3a3c; border-radius: 12px; padding: 15px; min-height: 100px; display: flex; flex-direction: column; gap: 15px; position: relative; width: fit-content; margin: 0 auto; }
+        .empty-state { color: #555; font-size: 0.9rem; padding: 40px 0; text-align: center; font-style: italic; min-width: 300px; }
         
         .row { display: grid; grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; gap: 8px; min-width: 650px; }
-        .box { background-color: #262629; border: 1px solid #222; padding: 10px 5px; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 0.9rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .box { background-color: #262629; border: 1px solid #222; padding: 10px 5px; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 0.9rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); overflow: hidden; }
         .correct { background-color: #538d4e !important; }
         .incorrect { background-color: #d32f2f !important; }
         
-        /* --- PANEL VICTORIA --- */
+        /* --- PANEL VICTORIA / ESPERA --- */
         #victory-panel { 
             display: none; background: linear-gradient(145deg, #1e1e20 0%, #121213 100%); 
-            border: 2px solid #00ff88; border-radius: 20px; padding: 25px; 
+            border: 2px solid #00ff88; border-radius: 20px; padding: 30px; 
             margin: 20px auto; max-width: 500px; box-shadow: 0 15px 40px rgba(0,255,136,0.15); 
         }
 
-        .victory-hero { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .victory-hero { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        
         .club-badge-circle { 
-            width: 70px; height: 70px; background: #2d2d30; border-radius: 50%; 
+            width: 140px; height: 140px; 
+            background: #2d2d30; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
-            border: 2px solid #3a3a3c; font-size: 2rem; overflow: hidden;
+            border: 3px solid #3a3a3c; font-size: 4rem; overflow: hidden;
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
         }
+
+        .victory-title-area { text-align: center; }
 
         .streak-badge { 
             display: inline-block; background: rgba(0, 255, 136, 0.1); 
@@ -166,21 +174,21 @@
         <div id="victory-panel">
             <div class="victory-hero">
                 <div class="club-badge-circle" id="victory-club-icon">⚽</div>
-                <div style="text-align: left;">
+                <div class="victory-title-area">
                     <div class="streak-badge" id="streak-count">🔥 RACHA: 1</div>
-                    <h2 id="victory-title" style="margin: 0; line-height: 1.1; color: #00ff88;">¡VICTORIA!</h2>
-                    <div id="victory-player-name" style="color: white; font-weight: 800; font-size: 1.2rem;"></div>
+                    <h2 id="victory-title" style="margin: 0 0 5px 0; line-height: 1.1; color: #00ff88;">¡VICTORIA!</h2>
+                    <div id="victory-phrase" style="font-style: italic; color: #bbb; font-size: 0.9rem;"></div>
+                    <div id="victory-player-name" style="color: #00ff88; font-weight: 800; font-size: 1.2rem;"></div>
                 </div>
             </div>
             
-            <div id="victory-time" style="font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; color: white;"></div>
-            <div id="victory-phrase" style="font-style: italic; color: #888; font-size: 0.85rem; margin-bottom: 15px;"></div>
+            <div id="victory-time" style="font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; color: white; text-align: center;"></div>
             
-            <button class="btn-share" onclick="shareToWhatsApp()">
+            <button id="share-btn-container" class="btn-share" onclick="shareToWhatsApp()">
                 Compartir en WhatsApp <span>📱</span>
             </button>
 
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #3a3a3c;">
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #3a3a3c; text-align: center;">
                 <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
                 <div id="cooldown-timer" style="font-size: 1.8rem; color: #00ff88; font-weight: 900;">00:00</div>
             </div>
@@ -207,7 +215,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // --- TU FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
             authDomain: "futguess-70a40.firebaseapp.com",
@@ -235,19 +242,41 @@
         }
 
         window.onload = function() {
+            checkLockout();
+        };
+
+        function checkLockout() {
             if (localStorage.getItem("futguess_played_window") == getWindowIndex()) {
                 document.getElementById("login-screen").style.display = "none";
                 document.getElementById("game-content").style.display = "block";
                 document.getElementById("input-wrapper").style.display = "none";
                 document.getElementById("stopwatch").style.display = "none";
                 document.getElementById("board-container").style.display = "none";
-                document.getElementById("victory-panel").style.display = "block";
-                document.getElementById("victory-title").innerText = "⏳ ¡PACIENCIA! ⏳";
-                document.getElementById("victory-phrase").innerText = "Vuelve en el próximo bloque de 15 minutos.";
+                
+                const vPanel = document.getElementById("victory-panel");
+                vPanel.style.display = "block";
+                
+                document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
+                document.getElementById("victory-phrase").innerText = "Ya jugaste esta ronda. El último crack fue:";
+                
+                const lastPlayer = localStorage.getItem("futguess_last_player") || "???";
+                const lastClub = localStorage.getItem("futguess_last_club") || "";
+                const streak = localStorage.getItem("futguess_streak") || "0";
+                
+                document.getElementById("victory-player-name").innerText = lastPlayer;
+                document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
+                document.getElementById("victory-time").innerText = "";
+                document.getElementById("share-btn-container").style.display = "none";
+
+                if (lastClub) {
+                    const clubClean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
+                    document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clubClean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
+                }
+
                 startCooldownTimer();
                 listenToGlobalLeaderboard("Fácil"); 
             }
-        };
+        }
 
         function startGame(diff) {
             const input = document.getElementById("alias-input");
@@ -306,12 +335,15 @@
                 return;
             }
 
-            const clubNameClean = targetPlayer.club.toLowerCase().replace(/ /g, "-").replace(/\./g, "");
+            const clubNameClean = targetPlayer.club.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
             const logoContainer = document.getElementById("victory-club-icon");
             logoContainer.innerHTML = `<img src="logos/${clubNameClean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
 
             let streak = parseInt(localStorage.getItem("futguess_streak") || "0") + 1;
             localStorage.setItem("futguess_streak", streak);
+            localStorage.setItem("futguess_last_player", targetPlayer.fullName);
+            localStorage.setItem("futguess_last_club", targetPlayer.club);
+            
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
             document.getElementById("victory-player-name").innerText = targetPlayer.fullName;
 
@@ -319,25 +351,18 @@
             localStorage.setItem("futguess_played_window", getWindowIndex());
             startCooldownTimer();
             
+            document.getElementById("victory-title").innerText = "🏆 ¡VICTORIA! 🏆";
             document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalGameTime)}`;
             document.getElementById("victory-phrase").innerText = "¡Eres un experto de los datos!";
             document.getElementById("victory-panel").style.display = "block";
+            document.getElementById("share-btn-container").style.display = "flex";
         }
 
-        // --- FUNCIÓN DE WHATSAPP MEJORADA Y LIMPIA ---
         function shareToWhatsApp() {
             const timeStr = formatTimeMinSec(finalGameTime);
             const streak = localStorage.getItem("futguess_streak") || "1";
             const attempts = guessedIds.length;
-            
-            // Construimos el mensaje con emojis estándar que WhatsApp reconoce 100%
-            let text = "⚽ *FUTGUESS* (" + selectedDifficulty + ")\n\n";
-            text += "🔥 *Racha:* " + streak + "\n";
-            text += "⏱️ *Tiempo:* " + timeStr + "\n";
-            text += "👟 *Intentos:* " + attempts + "\n\n";
-            text += "🏆 ¡Adiviné al crack! ¿Puedes ganarme? 🏆\n\n";
-            text += "Juega aquí: https://ragamoofi.github.io/futguess/";
-            
+            let text = "⚽ *FUTGUESS* (" + selectedDifficulty + ")\n\n🔥 *Racha:* " + streak + "\n⏱️ *Tiempo:* " + timeStr + "\n👟 *Intentos:* " + attempts + "\n\n🏆 ¡Adiviné al crack! ¿Puedes ganarme? 🏆\n\nhttps://ragamoofi.github.io/futguess/";
             const encodedText = encodeURIComponent(text);
             window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank");
         }
@@ -370,8 +395,7 @@
             const row = document.createElement("div"); row.classList.add("row");
             const fields = [{v: char.fullName, t: targetPlayer.fullName}, {v: char.league, t: targetPlayer.league}, {v: char.club, t: targetPlayer.club}, {v: char.country, t: targetPlayer.country}, {v: char.position, t: targetPlayer.position}, {v: char.age, t: targetPlayer.age, isAge: true}];
             fields.forEach((f) => {
-                const box = document.createElement("div"); 
-                box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
+                const box = document.createElement("div"); box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
                 if (f.isAge) box.innerText = `${f.v} ${f.v > f.t ? "⬇️" : f.v < f.t ? "⬆️" : ""}`; else box.innerText = f.v;
                 row.appendChild(box);
             });
@@ -381,24 +405,11 @@
         const inputEl = document.getElementById("player-input");
         const suggsEl = document.getElementById("suggestions");
         inputEl.addEventListener("input", function() {
-            if (!isTimerRunning && this.value.trim() !== "") { 
-                isTimerRunning = true; 
-                startTime = Date.now(); 
-                timerInterval = setInterval(() => { 
-                    if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); 
-                }, 100); 
-            }
+            if (!isTimerRunning && this.value.trim() !== "") { isTimerRunning = true; startTime = Date.now(); timerInterval = setInterval(() => { if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); }, 100); }
             const val = this.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             if (!val) { suggsEl.style.display = "none"; return; }
             const matches = players.filter(p => p.fullName.normalize("NFD").toLowerCase().includes(val) && !guessedIds.includes(p.fullName)).slice(0, 8);
-            suggsEl.innerHTML = "";
-            matches.forEach(m => {
-                const div = document.createElement("div"); 
-                div.className = "suggestion-item";
-                div.innerHTML = `<strong>${m.fullName}</strong> <small>(${m.club})</small>`;
-                div.onclick = () => { makeGuess(m); suggsEl.style.display = "none"; };
-                suggsEl.appendChild(div);
-            });
+            suggsEl.innerHTML = matches.map(m => `<div class="suggestion-item" onclick='makeGuess(${JSON.stringify(m)})'><strong>${m.fullName}</strong> <small>(${m.club})</small></div>`).join("");
             suggsEl.style.display = matches.length ? "block" : "none";
         });
         document.addEventListener("click", (e) => { if (e.target !== inputEl) suggsEl.style.display = "none"; });
