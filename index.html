@@ -59,8 +59,10 @@
             background-color: #00ff88; color: #121213; display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); 
         }
-
         .btn-diff:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 0 30px rgba(0, 255, 136, 0.7); }
+
+        .creator-tag { margin-top: 25px; font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .creator-tag span { color: #00ff88; text-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
 
         /* --- INTERFAZ DE JUEGO --- */
         #game-content { display: none; width: 100%; max-width: 720px; text-align: center; }
@@ -90,7 +92,6 @@
         
         #victory-panel { display: none; background: linear-gradient(145deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%); border: 2px solid #00ff88; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 500px; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
         
-        /* LEADERBOARD CENTRADO */
         #leaderboard { 
             margin: 35px auto 0 auto; width: 100%; max-width: 400px; 
             background: #1e1e20; border-radius: 15px; padding: 20px; 
@@ -103,7 +104,8 @@
         .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: left; border-bottom: 1px solid #3a3a3c; transition: 0.2s; font-size: 0.95rem; }
         .suggestion-item:hover { background-color: #3a3a3c; }
 
-        .footer { margin-top: 40px; padding: 20px 0; color: #444; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+        .footer { margin-top: 40px; padding: 20px 0; color: #444; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .footer span { color: #555; font-weight: 600; text-shadow: none; } 
     </style>
 </head>
 <body>
@@ -118,6 +120,7 @@
                 <button class="btn-diff" onclick="startGame('Normal')">Normal</button>
                 <button class="btn-diff" onclick="startGame('Difícil')">Difícil</button>
             </div>
+            <div class="creator-tag">MADE BY <span>RAGAMOOFI</span></div>
         </div>
     </div>
 
@@ -158,7 +161,7 @@
         </div>
     </div>
 
-    <div class="footer">¿Crees saber de fútbol? Demuéstralo.</div>
+    <div class="footer">¿Crees saber de fútbol? Demuéstralo. <br> <span>MADE BY RAGAMOOFI</span></div>
 
     <script src="database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -181,6 +184,18 @@
         let userAlias = ""; let gameOver = false; let guessedIds = [];
         let isTimerRunning = false; let selectedDifficulty = "";
         const msPerWindow = 1000 * 60 * 15;
+
+        // LISTADO DE FRASES DE TRAMPA
+        const frasesTrampa = [
+            "Ese tiempo es humanamente imposible.",
+            "¿Buscando la respuesta en Modo Incógnito?",
+            "Ni Flash tiene esos reflejos de un segundo.",
+            "El VAR ha detectado una trampa evidente.",
+            "¿Lo miraste en otro teléfono antes?",
+            "Adivinar en el primer segundo no es talento, es magia negra.",
+            "¡Anulado por fuera de juego tecnológico!",
+            "Tus datos son más falsos que un penal contra el equipo local."
+        ];
 
         function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
 
@@ -261,7 +276,9 @@
             const finalTime = (Date.now() - startTime) / 1000;
             const vPanel = document.getElementById("victory-panel");
             const vTitle = document.getElementById("victory-title");
+            const vPhrase = document.getElementById("victory-phrase");
 
+            // --- 🚨 LÓGICA ANTI-TRAMPAS DINÁMICA 🚨 ---
             if (finalTime < 4.5 && guessedIds.length === 1) {
                 localStorage.setItem("futguess_played_window", getWindowIndex());
                 startCooldownTimer();
@@ -269,7 +286,12 @@
                 vTitle.style.color = "#ff4d4d";
                 vPanel.style.borderColor = "#ff4d4d";
                 document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)} (ANULADO)`;
-                document.getElementById("victory-phrase").innerText = "Ese tiempo es humanamente imposible.";
+                
+                // Elegir frase aleatoria y sumar el mensaje de Lean
+                const rFrase = frasesTrampa[Math.floor(Math.random() * frasesTrampa.length)];
+                vPhrase.innerText = `${rFrase} ¡No seas como el Lean porfa!`;
+                vPhrase.style.color = "#ffaa00";
+                
                 vPanel.style.display = "block";
                 return;
             }
@@ -281,38 +303,28 @@
             vTitle.style.color = "#00ff88";
             vPanel.style.borderColor = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
-            document.getElementById("victory-phrase").innerText = "¡Eres un crack de los datos!";
+            vPhrase.innerText = "¡Eres un crack de los datos!";
+            vPhrase.style.color = "#bbb";
             vPanel.style.display = "block";
         }
 
-        // --- LÓGICA DE RANKING HISTÓRICO (PERMANENTE) ---
         function listenToGlobalLeaderboard(diff) {
             document.getElementById("lb-title-header").innerText = `🏆 TOP 10 HISTÓRICO (${diff}) 🏆`;
-            
-            db.collection("leaderboards")
-              .where("difficulty", "==", diff) // Quitamos el filtro de windowIndex
-              .orderBy("time", "asc")
-              .limit(10)
-              .onSnapshot((snapshot) => {
-                  const list = document.getElementById("lb-list");
-                  if (snapshot.empty) { list.innerHTML = "<div class='empty-state' style='padding:10px 0;'>Sin récords históricos aún.</div>"; return; }
-                  let html = ""; let rank = 1;
-                  snapshot.forEach((doc) => {
-                      const data = doc.data();
-                      html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color:#00ff88; font-weight:800;">${formatTimeMinSec(data.time)}</span></div>`;
-                      rank++;
-                  });
-                  list.innerHTML = html;
-              });
+            db.collection("leaderboards").where("difficulty", "==", diff).orderBy("time", "asc").limit(10).onSnapshot((snapshot) => {
+                const list = document.getElementById("lb-list");
+                if (snapshot.empty) { list.innerHTML = "<div class='empty-state' style='padding:10px 0;'>Sin récords históricos aún.</div>"; return; }
+                let html = ""; let rank = 1;
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color:#00ff88; font-weight:800;">${formatTimeMinSec(data.time)}</span></div>`;
+                    rank++;
+                });
+                list.innerHTML = html;
+            });
         }
 
         function saveScoreGlobal(name, time) {
-            db.collection("leaderboards").add({ 
-                name, 
-                time, 
-                difficulty: selectedDifficulty, 
-                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-            });
+            db.collection("leaderboards").add({ name, time, difficulty: selectedDifficulty, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
         }
 
         function formatTimeMinSec(totalSeconds) {
