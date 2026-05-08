@@ -171,7 +171,7 @@
 
         <div id="stopwatch">00:00.0</div>
         <div id="input-wrapper" style="position: relative;">
-            <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off">
+            <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off" onpaste="return false;">
             <div id="suggestions"></div>
         </div>
 
@@ -191,6 +191,11 @@
             <div class="victory-actions">
                 <button id="share-btn-container" class="btn-share" onclick="shareToWhatsApp()">Compartir en WhatsApp 📱</button>
                 <button class="btn-change-diff" onclick="backToMenu()">🔄 Cambiar Dificultad</button>
+            </div>
+
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #3a3a3c; text-align: center;">
+                <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Podrás jugar este nivel de nuevo en:</p>
+                <div id="cooldown-timer" style="font-size: 1.8rem; color: #00ff88; font-weight: 900;">00:00</div>
             </div>
         </div>
 
@@ -239,6 +244,9 @@
         let gameOver = false; let guessedIds = [];
         let isTimerRunning = false; let selectedDifficulty = "";
         let finalGameTime = 0; 
+        
+        // 15 MINUTOS DE ESPERA DESPUÉS DE GANAR
+        const MS_COOLDOWN = 15 * 60 * 1000; 
 
         const frasesVictoria = ["¡Tienes más ojo que un ojeador del City!", "Ni el VAR te quita esta victoria.", "¡Fichaje estrella detectado!", "¡Estás para dirigir a la Selección!", "Sabes más de fútbol que Maldini.", "¡Qué clase! Pareces el 10 clásico."];
         const frasesTrampa = ["Ese tiempo es humanamente imposible.", "El VAR ha detectado una trampa evidente.", "Tus datos son más falsos que un penal contra el local.", "¡Pillado! No seas como el Lean porfa."];
@@ -288,14 +296,20 @@
             badge.innerText = diff;
             badge.style.backgroundColor = { "Fácil": "#538d4e", "Normal": "#b59f3b", "Difícil": "#d32f2f" }[diff];
 
-            initSession();
+            // VERIFICA SI ESTÁ EN COOLDOWN EXACTO DE 15 MIN PARA ESTA DIFICULTAD
+            const lastPlay = localStorage.getItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
+            if (lastPlay && (Date.now() - parseInt(lastPlay) < MS_COOLDOWN)) {
+                showLockoutScreen();
+            } else {
+                localStorage.removeItem(`${DB_KEY}cooldown_${selectedDifficulty}`); // limpia por si acaso
+                initSession();
+            }
             listenToGlobalLeaderboard(diff); 
         }
 
-        // --- SISTEMA ALEATORIO 100% ---
+        // --- SISTEMA ALEATORIO 100% (F5 seguro) ---
         function selectTarget() {
             const filtered = players.filter(p => p.difficulty === selectedDifficulty);
-            // Elige un jugador completamente al azar en cada intento
             return filtered[Math.floor(Math.random() * filtered.length)];
         }
 
@@ -312,7 +326,60 @@
             document.getElementById("victory-panel").style.display = "none";
             document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("empty-state").style.display = "block";
+            document.getElementById("player-input").value = "";
             document.getElementById("player-input").focus();
+        }
+
+        function showLockoutScreen() {
+            document.getElementById("input-wrapper").style.display = "none";
+            document.getElementById("stopwatch").style.display = "none";
+            document.getElementById("board-container").style.display = "none";
+            
+            const vPanel = document.getElementById("victory-panel");
+            vPanel.style.display = "block";
+            vPanel.style.borderColor = "#00ff88";
+            
+            document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
+            document.getElementById("victory-title").style.color = "#00ff88";
+            document.getElementById("victory-phrase").innerText = "Ya adivinaste en esta dificultad. El crack fue:";
+            
+            const lastPlayer = localStorage.getItem(`${DB_KEY}lp_${selectedDifficulty}`) || "???";
+            const lastClub = localStorage.getItem(`${DB_KEY}lc_${selectedDifficulty}`) || "";
+            const streak = localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0";
+            
+            document.getElementById("victory-player-name").innerText = lastPlayer;
+            document.getElementById("victory-player-name").style.color = "#00ff88";
+            document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
+            document.getElementById("victory-time").innerText = "";
+            document.getElementById("share-btn-container").style.display = "none";
+            
+            if (lastClub) {
+                const clean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
+                document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
+            }
+            startCooldownTimer();
+        }
+
+        // TIMER RELATIVO (15 min desde la victoria)
+        function startCooldownTimer() {
+            if (window.cooldownInterval) clearInterval(window.cooldownInterval);
+            window.cooldownInterval = setInterval(() => {
+                const lastPlay = localStorage.getItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
+                if (!lastPlay) { clearInterval(window.cooldownInterval); return; }
+                
+                const unlockTime = parseInt(lastPlay) + MS_COOLDOWN;
+                const diff = unlockTime - Date.now();
+                
+                if (diff <= 0) { 
+                    clearInterval(window.cooldownInterval); 
+                    localStorage.removeItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
+                    location.reload(); 
+                    return; 
+                }
+                const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }, 1000);
         }
 
         function makeGuess(guessed) {
@@ -334,25 +401,43 @@
             if (finalGameTime < 4.5 && guessedIds.length === 1) {
                 const audio = document.getElementById("audio-trampa");
                 audio.load(); audio.play().catch(() => {});
+                
                 vPanel.style.display = "block";
                 vPanel.style.borderColor = "#ff4d4d";
                 vPanel.style.boxShadow = "0 0 30px rgba(255, 77, 77, 0.4)";
+                
+                // ICONO BANDERA PIRATA PARA TRAMPOSO
+                document.getElementById("victory-club-icon").innerHTML = "🏴‍☠️";
+                document.getElementById("victory-club-icon").style.fontSize = "5rem";
+                
                 document.getElementById("victory-title").innerText = "🚨 TRAMPOSO 🚨";
                 document.getElementById("victory-title").style.color = "#ff4d4d";
                 document.getElementById("victory-phrase").innerText = frasesTrampa[Math.floor(Math.random() * frasesTrampa.length)];
                 document.getElementById("victory-player-name").innerText = "¡No seas como el Lean porfa!";
                 document.getElementById("victory-player-name").style.color = "#ffaa00";
                 document.getElementById("share-btn-container").style.display = "none";
+                
+                // Inicia el castigo de 15 min
+                localStorage.setItem(`${DB_KEY}cooldown_${selectedDifficulty}`, Date.now());
+                startCooldownTimer();
                 return;
             }
 
-            // --- VICTORIA CON CONFETI ---
+            // --- VICTORIA LEGAL CON CONFETI ---
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#00ff88', '#ffffff'] });
+            
             const clean = targetPlayer.club.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
+            document.getElementById("victory-club-icon").style.fontSize = "4rem"; // reset font size
             document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
 
             let streak = parseInt(localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0") + 1;
             localStorage.setItem(`${DB_KEY}st_${selectedDifficulty}`, streak);
+            localStorage.setItem(`${DB_KEY}lp_${selectedDifficulty}`, targetPlayer.fullName);
+            localStorage.setItem(`${DB_KEY}lc_${selectedDifficulty}`, targetPlayer.club);
+            
+            // INICIA LA ESPERA DE 15 MIN
+            localStorage.setItem(`${DB_KEY}cooldown_${selectedDifficulty}`, Date.now());
+            startCooldownTimer();
 
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
             document.getElementById("victory-title").innerText = "¡VICTORIA!";
