@@ -39,68 +39,28 @@
         .rules-text { color: #777; font-size: 0.8rem; margin: 0; }
         .rules-text span { color: #00ff88; font-weight: bold; }
         
-        /* --- PANTALLA DE INICIO (ESTILO UNIFICADO) --- */
+        /* --- PANTALLA DE INICIO --- */
         #login-screen { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(18, 18, 19, 0.98); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 100; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(18, 18, 19, 0.98); display: flex; 
+            flex-direction: column; justify-content: center; align-items: center; z-index: 100; 
         }
         .login-box { 
-            background: #2d2d30; 
-            padding: 35px; 
-            border-radius: 20px; 
-            border: 2px solid #3a3a3c; 
-            text-align: center; 
-            max-width: 420px; 
-            width: 90%; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+            background: #2d2d30; padding: 35px; border-radius: 20px; border: 2px solid #3a3a3c; 
+            text-align: center; max-width: 420px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
         }
         
-        .diff-container { 
-            display: flex; 
-            justify-content: center; 
-            gap: 12px; 
-            margin-top: 25px; 
-            width: 100%;
-        }
+        .diff-container { display: flex; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; }
 
-        /* Botones Óvalo con Brillo Uniforme */
         .btn-diff { 
-            flex: 1; 
-            max-width: 120px; 
-            padding: 12px 15px; 
-            border-radius: 50px; 
-            border: 2px solid #00ff88; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            transition: 0.3s ease-in-out; 
-            font-size: 0.8rem; 
-            letter-spacing: 1px;
-            text-align: center;
-            background-color: #00ff88; 
-            color: #121213; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-            /* Brillo Neón Uniforme para los tres */
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6); 
+            flex: 1; max-width: 120px; padding: 12px 15px; border-radius: 50px; border: 2px solid #00ff88; 
+            font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; 
+            font-size: 0.8rem; letter-spacing: 1px; text-align: center;
+            background-color: #00ff88; color: #121213; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); 
         }
 
-        .btn-diff:hover { 
-            transform: scale(1.05); 
-            filter: brightness(1.15); 
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
-        }
+        .btn-diff:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 0 30px rgba(0, 255, 136, 0.7); }
 
         /* --- INTERFAZ DE JUEGO --- */
         #game-content { display: none; width: 100%; max-width: 720px; text-align: center; }
@@ -114,12 +74,8 @@
         input[type="text"]:focus { outline: none; border-color: #00ff88; }
 
         #stopwatch { 
-            font-size: 3.2rem; 
-            color: #00ff88; 
-            font-weight: 900; 
-            margin: 5px 0 20px 0; 
-            font-variant-numeric: tabular-nums; 
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            font-size: 3.2rem; color: #00ff88; font-weight: 900; margin: 5px 0 20px 0; 
+            font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
         #board-container { width: 100%; margin-top: 10px; overflow-x: auto; }
@@ -132,22 +88,17 @@
         .correct { background-color: #538d4e !important; }
         .incorrect { background-color: #d32f2f !important; }
         
+        /* PANEL VICTORIA / ALERTA */
         #victory-panel { display: none; background: linear-gradient(145deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%); border: 2px solid #00ff88; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 500px; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
-        #victory-title { color: #00ff88; margin: 0 0 10px 0; font-size: 1.6rem; text-shadow: 0 0 10px rgba(0,255,136,0.4); }
         
+        /* LEADERBOARD CENTRADO */
         #leaderboard { 
-            margin: 35px auto 0 auto; 
-            width: 100%; 
-            max-width: 400px; 
-            background: #1e1e20; 
-            border-radius: 15px; 
-            padding: 20px; 
-            border: 1px solid #3a3a3c; 
-            text-align: left;
+            margin: 35px auto 0 auto; width: 100%; max-width: 400px; 
+            background: #1e1e20; border-radius: 15px; padding: 20px; 
+            border: 1px solid #3a3a3c; text-align: left;
         }
         #leaderboard h3 { color: #00ff88; margin: 0 0 15px 0; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; text-align: center; border-bottom: 1px solid #3a3a3c; padding-bottom: 10px; }
         .lb-entry { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2d2d30; font-size: 0.9rem; }
-        .lb-entry.loading { color: #888; text-align: center; display: block; font-style: italic; }
 
         #suggestions { display: none; position: absolute; width: 100%; background: #2d2d30; border: 2px solid #00ff88; border-radius: 0 0 12px 12px; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; }
         .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: left; border-bottom: 1px solid #3a3a3c; transition: 0.2s; font-size: 0.95rem; }
@@ -163,7 +114,6 @@
             <h1 style="font-size: 2rem;">FutGuess</h1>
             <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">Alias y Nivel para comenzar</p>
             <input type="text" id="alias-input" placeholder="Tu Apodo..." maxlength="15">
-            
             <div class="diff-container">
                 <button class="btn-diff" onclick="startGame('Fácil')">Fácil</button>
                 <button class="btn-diff" onclick="startGame('Normal')">Normal</button>
@@ -180,7 +130,6 @@
         </div>
 
         <div id="stopwatch">00:00.0</div>
-        
         <div id="input-wrapper" style="position: relative;">
             <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off">
             <div id="suggestions"></div>
@@ -197,9 +146,7 @@
         </div>
 
         <div id="board-container">
-            <div class="row-header">
-                <div>Jugador</div><div>Liga</div><div>Club</div><div>País</div><div>Pos</div><div>Edad</div>
-            </div>
+            <div class="row-header"><div>Jugador</div><div>Liga</div><div>Club</div><div>País</div><div>Pos</div><div>Edad</div></div>
             <div id="board-wrapper">
                 <div id="empty-state" class="empty-state">Escribe para arrancar el cronómetro...</div>
                 <div id="board"></div>
@@ -219,6 +166,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
+        // --- TU FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
             authDomain: "futguess-70a40.firebaseapp.com",
@@ -227,33 +175,24 @@
             messagingSenderId: "556929749278",
             appId: "1:556929749278:web:a9ce3bb80d9552d8c8390f"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let targetPlayer = null;
-        let startTime = null;
-        let timerInterval = null;
-        let userAlias = "";
-        let gameOver = false;
-        let guessedIds = [];
-        let isTimerRunning = false;
-        let selectedDifficulty = "";
+        let targetPlayer = null; let startTime = null; let timerInterval = null;
+        let userAlias = ""; let gameOver = false; let guessedIds = [];
+        let isTimerRunning = false; let selectedDifficulty = "";
         const msPerWindow = 1000 * 60 * 15;
 
         function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
 
         function selectTarget() {
             const filtered = players.filter(p => p.difficulty === selectedDifficulty);
-            if (filtered.length === 0) return players[0]; 
             const windowIdx = getWindowIndex();
             let seed = (windowIdx * 16807) % 2147483647;
             return filtered[seed % filtered.length];
         }
 
-        window.onload = function() { checkLockout(); };
-
-        function checkLockout() {
+        window.onload = function() {
             const currentWindow = getWindowIndex();
             if (localStorage.getItem("futguess_played_window") == currentWindow) {
                 document.getElementById("login-screen").style.display = "none";
@@ -261,13 +200,14 @@
                 document.getElementById("input-wrapper").style.display = "none";
                 document.getElementById("stopwatch").style.display = "none";
                 document.getElementById("board-container").style.display = "none";
-                document.getElementById("victory-panel").style.display = "block";
+                const vPanel = document.getElementById("victory-panel");
+                vPanel.style.display = "block";
                 document.getElementById("victory-title").innerText = "⏳ ¡PACIENCIA! ⏳";
                 document.getElementById("victory-phrase").innerText = "Ya jugaste esta ronda. ¡Vuelve en el próximo bloque!";
                 startCooldownTimer();
                 listenToGlobalLeaderboard("Fácil"); 
             }
-        }
+        };
 
         function startGame(diff) {
             const input = document.getElementById("alias-input");
@@ -285,10 +225,8 @@
 
         function initSession() {
             targetPlayer = selectTarget();
-            isTimerRunning = false;
-            clearInterval(timerInterval);
-            gameOver = false;
-            guessedIds = [];
+            isTimerRunning = false; clearInterval(timerInterval);
+            gameOver = false; guessedIds = [];
             document.getElementById("board").innerHTML = "";
             document.getElementById("player-input").disabled = false;
             document.getElementById("victory-panel").style.display = "none";
@@ -297,19 +235,10 @@
         }
 
         function startCooldownTimer() {
-            const currentIdx = getWindowIndex();
-            const targetTime = (currentIdx + 1) * msPerWindow;
-
+            const targetTime = (getWindowIndex() + 1) * msPerWindow;
             const timerObj = setInterval(() => {
-                const now = Date.now();
-                const diff = targetTime - now;
-                if (diff <= 0) {
-                    clearInterval(timerObj);
-                    document.getElementById("cooldown-msg").innerText = "¡MERCADO ABIERTO!";
-                    document.getElementById("cooldown-timer").innerText = "LISTO";
-                    setTimeout(() => { location.reload(); }, 1500);
-                    return;
-                }
+                const diff = targetTime - Date.now();
+                if (diff <= 0) { clearInterval(timerObj); setTimeout(() => location.reload(), 1500); return; }
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
                 document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
@@ -317,26 +246,49 @@
         }
 
         function makeGuess(guessed) {
-            if (gameOver || guessedIds.includes(guessed.fullName) || !targetPlayer) return;
+            if (gameOver || guessedIds.includes(guessed.fullName)) return;
             document.getElementById("empty-state").style.display = "none";
             guessedIds.push(guessed.fullName);
             createRow(guessed);
-            if (guessed.fullName === targetPlayer.fullName) endGame(true);
+            if (guessed.fullName === targetPlayer.fullName) endGame();
             document.getElementById("player-input").value = "";
             if(!gameOver) document.getElementById("player-input").focus(); 
         }
 
-        function endGame(won) {
+        function endGame() {
             gameOver = true;
             clearInterval(timerInterval);
             document.getElementById("player-input").disabled = true;
             const finalTime = (Date.now() - startTime) / 1000;
+            const vPanel = document.getElementById("victory-panel");
+            const vTitle = document.getElementById("victory-title");
+            const vPhrase = document.getElementById("victory-phrase");
+
+            // --- 🚨 LÓGICA ANTI-TRAMPAS (RESTAURADA) 🚨 ---
+            if (finalTime < 4.5 && guessedIds.length === 1) {
+                localStorage.setItem("futguess_played_window", getWindowIndex());
+                startCooldownTimer();
+                vTitle.innerText = "🚨 TRAMPOSO DETECTADO 🚨";
+                vTitle.style.color = "#ff4d4d";
+                vPanel.style.borderColor = "#ff4d4d";
+                document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)} (ANULADO)`;
+                vPhrase.innerText = '"Ese tiempo es humanamente imposible. El VAR ha anulado tu récord por sospecha de trampa."';
+                vPhrase.style.color = "#ffaa00";
+                vPanel.style.display = "block";
+                return; // ⛔ NO GUARDA EN FIREBASE
+            }
+
+            // GUARDADO NORMAL
             saveScoreGlobal(userAlias, finalTime);
             localStorage.setItem("futguess_played_window", getWindowIndex());
             startCooldownTimer();
-            document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)}`;
-            document.getElementById("victory-phrase").innerText = "¡Eres un experto de los datos!";
-            document.getElementById("victory-panel").style.display = "block";
+            vTitle.innerText = "🏆 ¡VICTORIA! 🏆";
+            vTitle.style.color = "#00ff88";
+            vPanel.style.borderColor = "#00ff88";
+            document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
+            vPhrase.innerText = "¡Eres un experto de los datos!";
+            vPhrase.style.color = "#bbb";
+            vPanel.style.display = "block";
         }
 
         function listenToGlobalLeaderboard(diff) {
@@ -364,14 +316,11 @@
         }
 
         function createRow(char) {
-            const row = document.createElement("div");
-            row.classList.add("row");
+            const row = document.createElement("div"); row.classList.add("row");
             const fields = [{v: char.fullName, t: targetPlayer.fullName}, {v: char.league, t: targetPlayer.league}, {v: char.club, t: targetPlayer.club}, {v: char.country, t: targetPlayer.country}, {v: char.position, t: targetPlayer.position}, {v: char.age, t: targetPlayer.age, isAge: true}];
             fields.forEach((f) => {
-                const box = document.createElement("div");
-                box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
-                if (f.isAge) box.innerText = `${f.v} ${f.v > f.t ? "⬇️" : f.v < f.t ? "⬆️" : ""}`;
-                else box.innerText = f.v;
+                const box = document.createElement("div"); box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
+                if (f.isAge) box.innerText = `${f.v} ${f.v > f.t ? "⬇️" : f.v < f.t ? "⬆️" : ""}`; else box.innerText = f.v;
                 row.appendChild(box);
             });
             document.getElementById("board").prepend(row);
@@ -379,34 +328,24 @@
 
         const inputEl = document.getElementById("player-input");
         const suggsEl = document.getElementById("suggestions");
-        
         inputEl.addEventListener("input", function() {
             if (!isTimerRunning && this.value.trim() !== "") { 
-                isTimerRunning = true; 
-                startTime = Date.now(); 
-                timerInterval = setInterval(() => { 
-                    if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); 
-                }, 100); 
+                isTimerRunning = true; startTime = Date.now(); 
+                timerInterval = setInterval(() => { if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); }, 100); 
             }
             const val = this.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             if (!val) { suggsEl.style.display = "none"; return; }
-            
             const matches = players.filter(p => p.fullName.normalize("NFD").toLowerCase().includes(val) && !guessedIds.includes(p.fullName)).slice(0, 8);
-            
             suggsEl.innerHTML = "";
             matches.forEach(m => {
-                const div = document.createElement("div");
-                div.className = "suggestion-item";
+                const div = document.createElement("div"); div.className = "suggestion-item";
                 div.innerHTML = `<strong>${m.fullName}</strong> <small>(${m.club})</small>`;
                 div.onclick = () => { makeGuess(m); suggsEl.style.display = "none"; };
                 suggsEl.appendChild(div);
             });
             suggsEl.style.display = matches.length ? "block" : "none";
         });
-
-        document.addEventListener("click", function(e) {
-            if (e.target !== inputEl && e.target !== suggsEl) suggsEl.style.display = "none";
-        });
+        document.addEventListener("click", (e) => { if (e.target !== inputEl) suggsEl.style.display = "none"; });
     </script>
 </body>
 </html>
