@@ -30,11 +30,13 @@
         @keyframes flipIn { 0% { transform: rotateX(-90deg); opacity: 0; } 100% { transform: rotateX(0); opacity: 1; } }
         .correct { background-color: #538d4e !important; border-color: #43753e !important; }
         .incorrect { background-color: #d32f2f !important; border-color: #b72424 !important; }
+        
         #victory-panel { display: none; background: linear-gradient(145deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 255, 136, 0.05) 100%); border: 2px solid #00ff88; border-radius: 12px; padding: 25px; margin: 20px 0; animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
         @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        #victory-panel h2 { color: #00ff88; margin: 0 0 10px 0; letter-spacing: 2px; font-size: 1.8rem; text-shadow: 0 0 10px rgba(0,255,136,0.4); }
+        #victory-title { color: #00ff88; margin: 0 0 10px 0; letter-spacing: 2px; font-size: 1.8rem; text-shadow: 0 0 10px rgba(0,255,136,0.4); }
         #victory-time { font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; }
         #victory-phrase { font-style: italic; color: #ddd; font-size: 1rem; line-height: 1.4; }
+        
         #leaderboard { margin-top: 35px; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; background: #1e1e20; border-radius: 15px; padding: 25px; border: 1px solid #3a3a3c; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         #leaderboard h3 { color: #00ff88; margin-top: 0; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1.5px; text-align: center; border-bottom: 1px solid #3a3a3c; padding-bottom: 15px;}
         .lb-entry { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d2d30; font-size: 0.95rem; }
@@ -66,16 +68,20 @@
 
         <div id="stopwatch">00:00.0</div>
         
-        <div style="position: relative;">
+        <div id="input-wrapper" style="position: relative;">
             <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off">
             <div id="suggestions"></div>
         </div>
 
         <div id="victory-panel">
-            <h2>🏆 ¡VICTORIA! 🏆</h2>
+            <h2 id="victory-title">🏆 ¡VICTORIA! 🏆</h2>
             <div id="victory-time"></div>
             <div id="victory-phrase"></div>
-            <p style="font-size: 0.8rem; color: #888; margin-top: 15px; font-weight: bold;">El próximo jugador estará disponible en el siguiente ciclo de 15 minutos.</p>
+            
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #3a3a3c;">
+                <p style="font-size: 0.85rem; color: #aaa; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
+                <div id="cooldown-timer" style="font-size: 2.2rem; color: #00ff88; font-weight: 900; font-variant-numeric: tabular-nums; text-shadow: 0 0 10px rgba(0,255,136,0.3);">00:00</div>
+            </div>
         </div>
 
         <div id="board-container">
@@ -102,8 +108,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // --- PEGA TU FIREBASE CONFIG AQUÍ ---
-       const firebaseConfig = {
+        // --- PEGA TU FIREBASE CONFIG AQUÍ OTRA VEZ ---
+        const firebaseConfig = {
   apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
   authDomain: "futguess-70a40.firebaseapp.com",
   projectId: "futguess-70a40",
@@ -126,7 +132,7 @@
         let guessedIds = [];
         let isTimerRunning = false;
 
-        const msPerWindow = 1000 * 60 * 15;
+        const msPerWindow = 1000 * 60 * 15; // 15 Minutos
 
         const frasesVictoria = [
             "¡Ni Pep Guardiola lo hubiera adivinado tan rápido!",
@@ -150,13 +156,43 @@
             return players[seed % players.length];
         }
 
+        // --- COMPROBAR CANDADO ANTITRAMPAS AL CARGAR LA PÁGINA ---
+        window.onload = function() {
+            checkLockout();
+        };
+
+        function checkLockout() {
+            const currentWindow = getWindowIndex();
+            const lastPlayedWindow = localStorage.getItem("futguess_played_window");
+
+            if (lastPlayedWindow == currentWindow) {
+                // Ya jugó esta ronda, bloquear el juego
+                document.getElementById("login-screen").style.display = "none";
+                document.getElementById("game-content").style.display = "block";
+                
+                // Ocultar zonas de juego
+                document.getElementById("input-wrapper").style.display = "none";
+                document.getElementById("stopwatch").style.display = "none";
+                document.getElementById("board-container").style.display = "none";
+                
+                // Configurar y mostrar panel de espera
+                const vPanel = document.getElementById("victory-panel");
+                vPanel.style.display = "block";
+                document.getElementById("victory-title").innerText = "⏳ ¡YA JUGASTE! ⏳";
+                document.getElementById("victory-time").innerText = "";
+                document.getElementById("victory-phrase").innerText = "Solo se permite un intento por dispositivo. ¡Los récords no se farmean!";
+                
+                startCooldownTimer();
+                listenToGlobalLeaderboard();
+            }
+        }
+
         // --- SISTEMA DE LEADERBOARD EN TIEMPO REAL CON FIREBASE ---
-        // Esto escucha la base de datos de Google todo el tiempo
         function listenToGlobalLeaderboard() {
-            const currentWindow = getWindowIndex(); // Solo mostramos los récords de la ronda actual
+            const currentWindow = getWindowIndex(); 
             
             db.collection("leaderboards")
-              .where("windowIndex", "==", currentWindow) // Filtra por la ronda actual (15 mins)
+              .where("windowIndex", "==", currentWindow)
               .orderBy("time", "asc")
               .limit(10)
               .onSnapshot((snapshot) => {
@@ -182,13 +218,12 @@
               });
         }
 
-        // Guarda el récord en la nube
         function saveScoreGlobal(name, time) {
             const currentWindow = getWindowIndex();
             db.collection("leaderboards").add({
                 name: name,
                 time: time,
-                windowIndex: currentWindow, // Guardamos a qué ronda pertenece
+                windowIndex: currentWindow, 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 console.log("¡Récord subido a la nube!");
@@ -206,7 +241,7 @@
             document.getElementById("game-content").style.display = "block";
             
             initSession();
-            listenToGlobalLeaderboard(); // Empezar a escuchar los récords del mundo
+            listenToGlobalLeaderboard(); 
         }
 
         function initSession() {
@@ -243,6 +278,26 @@
             }, 100);
         }
 
+        // --- CRONÓMETRO DE ESPERA (COOLDOWN) ---
+        function startCooldownTimer() {
+            setInterval(() => {
+                const now = Date.now();
+                const nextWindow = (getWindowIndex() + 1) * msPerWindow;
+                const diff = nextWindow - now;
+
+                // Si el tiempo llegó a 0, recargar la página para el nuevo jugador
+                if (diff <= 0) {
+                    location.reload(); 
+                    return;
+                }
+
+                const m = Math.floor((diff / 1000 / 60) % 60);
+                const s = Math.floor((diff / 1000) % 60);
+                document.getElementById("cooldown-timer").innerText = 
+                    `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+
         function makeGuess(guessed) {
             if (gameOver || guessedIds.includes(guessed.fullName)) return;
             
@@ -266,8 +321,11 @@
             
             const finalTime = (Date.now() - startTime) / 1000;
             
-            // Llama a la nueva función que sube el récord a Internet
             saveScoreGlobal(userAlias, finalTime);
+            
+            // PONER EL CANDADO EN ESTE DISPOSITIVO
+            localStorage.setItem("futguess_played_window", getWindowIndex());
+            startCooldownTimer(); // Iniciar el cronómetro de la próxima ronda
             
             const fraseRandom = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
             document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
