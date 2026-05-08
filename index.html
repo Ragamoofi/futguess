@@ -39,7 +39,7 @@
         .rules-text { color: #777; font-size: 0.8rem; margin: 0; }
         .rules-text span { color: #00ff88; font-weight: bold; }
         
-        /* --- PANTALLA DE INICIO (ESTILO CORREGIDO SEGÚN BOCETO) --- */
+        /* --- PANTALLA DE INICIO (ESTILO UNIFICADO) --- */
         #login-screen { 
             position: fixed; 
             top: 0; 
@@ -59,76 +59,50 @@
             border-radius: 20px; 
             border: 2px solid #3a3a3c; 
             text-align: center; 
-            max-width: 420px; /* Un poco más ancho para los botones en fila */
+            max-width: 420px; 
             width: 90%; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
         }
         
-        /* Contenedor Horizontal para Botones de Dificultad */
         .diff-container { 
-            display: flex; /* Cambio crucial a horizontal */
+            display: flex; 
             justify-content: center; 
-            gap: 12px; /* Espacio entre botones */
+            gap: 12px; 
             margin-top: 25px; 
             width: 100%;
         }
 
-        /* Estilo base Óvalo Neón para todos los botones */
+        /* Botones Óvalo con Brillo Uniforme */
         .btn-diff { 
-            flex: 1; /* Todos ocupan el mismo espacio */
-            max-width: 120px; /* Control de ancho máximo en fila */
+            flex: 1; 
+            max-width: 120px; 
             padding: 12px 15px; 
-            border-radius: 50px; /* Forma Óvalo perfecto */
+            border-radius: 50px; 
             border: 2px solid #00ff88; 
             font-weight: 900; 
             text-transform: uppercase; 
             cursor: pointer; 
             transition: 0.3s ease-in-out; 
-            font-size: 0.8rem; /* Fuente compacta para horizontal */
+            font-size: 0.8rem; 
             letter-spacing: 1px;
             text-align: center;
-            
-            /* Tema Verde Neón con Texto Oscuro (mayor contraste) */
             background-color: #00ff88; 
             color: #121213; 
-            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
+            
+            /* Brillo Neón Uniforme para los tres */
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6); 
         }
 
         .btn-diff:hover { 
             transform: scale(1.05); 
-            filter: brightness(1.15); /* Aumenta brillo al pasar el mouse */
-        }
-
-        /* --- BRILLO (GLOW) DIFERENCIAL SEGÚN DIFICULTAD --- */
-        
-        /* 1. Nivel Fácil: Brillo Suave (Sutil) */
-        .btn-facil { 
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); 
-        }
-        .btn-facil:hover {
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-        }
-
-        /* 2. Nivel Normal: Brillo Medio (Notable) */
-        .btn-normal { 
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6); 
-        }
-        .btn-normal:hover {
+            filter: brightness(1.15); 
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
         }
 
-        /* 3. Nivel Difícil: Brillo Intenso (Muy Potente) */
-        .btn-dificil { 
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.8), 0 0 50px rgba(0, 255, 136, 0.4); 
-        }
-        .btn-dificil:hover {
-            box-shadow: 0 0 35px rgba(0, 255, 136, 0.9), 0 0 70px rgba(0, 255, 136, 0.5);
-        }
-
-        /* --- INTERFAZ DE JUEGO (RESTO DE ESTILOS MANTENIDOS) --- */
+        /* --- INTERFAZ DE JUEGO --- */
         #game-content { display: none; width: 100%; max-width: 720px; text-align: center; }
         
         input[type="text"] { 
@@ -191,9 +165,9 @@
             <input type="text" id="alias-input" placeholder="Tu Apodo..." maxlength="15">
             
             <div class="diff-container">
-                <button class="btn-diff btn-facil" onclick="startGame('Fácil')">Fácil</button>
-                <button class="btn-diff btn-normal" onclick="startGame('Normal')">Normal</button>
-                <button class="btn-diff btn-dificil" onclick="startGame('Difícil')">Difícil</button>
+                <button class="btn-diff" onclick="startGame('Fácil')">Fácil</button>
+                <button class="btn-diff" onclick="startGame('Normal')">Normal</button>
+                <button class="btn-diff" onclick="startGame('Difícil')">Difícil</button>
             </div>
         </div>
     </div>
@@ -245,7 +219,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // --- TU CONFIGURACIÓN DE FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
             authDomain: "futguess-70a40.firebaseapp.com",
