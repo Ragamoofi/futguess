@@ -11,31 +11,18 @@
         /* --- ESTILOS BASE --- */
         body { 
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #121213; 
-            color: #ffffff; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            margin: 0; 
-            padding: 20px; 
-            letter-spacing: -0.01em; 
-            min-height: 100vh; 
+            background-color: #121213; color: #ffffff; display: flex; 
+            flex-direction: column; align-items: center; margin: 0; padding: 20px; 
+            letter-spacing: -0.01em; min-height: 100vh; 
         }
 
         .header-container { text-align: center; margin-bottom: 20px; }
 
         h1 { 
-            color: #00ff88; 
-            margin: 0 0 5px 0; 
-            letter-spacing: 3px; 
-            text-transform: uppercase; 
-            font-weight: 900; 
-            font-size: 2.2rem;
+            color: #00ff88; margin: 0 0 5px 0; letter-spacing: 3px; 
+            text-transform: uppercase; font-weight: 900; font-size: 2.2rem;
             text-shadow: 0 0 15px rgba(0, 255, 136, 0.6), 0 0 30px rgba(0, 255, 136, 0.2);
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
         }
 
         .subtitle { color: #e0e0e0; font-size: 0.95rem; margin: 0 0 5px 0; font-weight: 500; }
@@ -53,6 +40,11 @@
             text-align: center; max-width: 420px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
         }
         
+        #current-alias { color: #00ff88; font-weight: 900; font-size: 1.4rem; display: block; margin-bottom: 15px; }
+        
+        /* Advertencia sutil */
+        .alias-warning { color: #666; font-size: 0.75rem; font-weight: 400; margin-top: -10px; margin-bottom: 20px; display: block; letter-spacing: 0.5px; }
+
         .diff-container { display: flex; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; }
 
         .btn-diff { 
@@ -64,8 +56,9 @@
         }
         .btn-diff:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 0 30px rgba(0, 255, 136, 0.7); }
 
-        .creator-tag { margin-top: 25px; font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-        .creator-tag span { color: #00ff88; text-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
+        /* Made By en Login (más claro) */
+        .footer-login { margin-top: 25px; font-size: 0.65rem; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .footer-login span { color: #00ff88; text-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
 
         /* --- INTERFAZ DE JUEGO --- */
         #game-content { display: none; width: 100%; max-width: 720px; text-align: center; }
@@ -83,13 +76,13 @@
             font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
 
-        #board-container { width: 100%; margin-top: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        #board-container { width: 100%; margin-top: 10px; overflow-x: auto; }
         .row-header { display: grid; grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; gap: 8px; margin-bottom: 10px; min-width: 650px; font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 800; }
-        #board-wrapper { background: rgba(30, 30, 32, 0.3); border: 2px dashed #3a3a3c; border-radius: 12px; padding: 15px; min-height: 100px; display: flex; flex-direction: column; gap: 15px; position: relative; width: fit-content; margin: 0 auto; }
-        .empty-state { color: #555; font-size: 0.9rem; padding: 40px 0; text-align: center; font-style: italic; min-width: 300px; }
+        #board-wrapper { background: rgba(30, 30, 32, 0.3); border: 2px dashed #3a3a3c; border-radius: 12px; padding: 15px; min-height: 100px; display: flex; flex-direction: column; gap: 15px; position: relative; }
+        .empty-state { color: #555; font-size: 0.9rem; padding: 40px 0; text-align: center; font-style: italic; }
         
         .row { display: grid; grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; gap: 8px; min-width: 650px; }
-        .box { background-color: #262629; border: 1px solid #222; padding: 10px 5px; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 0.9rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); overflow: hidden; }
+        .box { background-color: #262629; border: 1px solid #222; padding: 10px 5px; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 0.9rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .correct { background-color: #538d4e !important; }
         .incorrect { background-color: #d32f2f !important; }
         
@@ -98,33 +91,25 @@
             display: none; background: linear-gradient(145deg, #1e1e20 0%, #121213 100%); 
             border: 2px solid #00ff88; border-radius: 20px; padding: 30px; 
             margin: 20px auto; max-width: 500px; box-shadow: 0 15px 40px rgba(0,255,136,0.15); 
+            transition: 0.3s ease;
         }
 
         .victory-hero { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
         
         .club-badge-circle { 
-            width: 140px; height: 140px; 
-            background: #2d2d30; border-radius: 50%; 
+            width: 140px; height: 140px; background: #2d2d30; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
             border: 3px solid #3a3a3c; font-size: 4rem; overflow: hidden;
             box-shadow: 0 0 25px rgba(0,0,0,0.4);
         }
 
         .victory-title-area { text-align: center; }
+        .streak-badge { display: inline-block; background: rgba(0, 255, 136, 0.1); color: #00ff88; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; border: 1px solid #00ff88; }
 
-        .streak-badge { 
-            display: inline-block; background: rgba(0, 255, 136, 0.1); 
-            color: #00ff88; padding: 4px 12px; border-radius: 20px; 
-            font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; border: 1px solid #00ff88;
-        }
-
-        .btn-share {
-            margin-top: 20px; width: 100%; padding: 14px; background: #25D366; 
-            color: white; border: none; border-radius: 12px; font-weight: 900; 
-            text-transform: uppercase; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-share:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37,211,102,0.4); }
+        .victory-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-share { width: 100%; padding: 14px; background: #25D366; color: white; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-change-diff { width: 100%; padding: 12px; background: transparent; color: #00ff88; border: 2px solid #00ff88; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .btn-share:hover, .btn-change-diff:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         #leaderboard { 
             margin: 35px auto 0 auto; width: 100%; max-width: 400px; 
@@ -138,23 +123,32 @@
         .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: left; border-bottom: 1px solid #3a3a3c; transition: 0.2s; font-size: 0.95rem; }
         .suggestion-item:hover { background-color: #3a3a3c; }
 
-        .footer { margin-top: 40px; padding: 20px 0; color: #444; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .footer span { color: #555; font-weight: 600; text-shadow: none; } 
+        /* Made By en Juego (muy sutil) */
+        .footer-game { margin-top: 40px; padding: 20px 0; color: #444; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; }
+        .footer-game span { color: #555; font-weight: 600; }
+        .funny-motto-footer { margin-bottom: 8px; font-style: italic; color: #666; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="font-size: 2rem;">FutGuess</h1>
-            <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">Alias y Nivel para comenzar</p>
+            <h1>FutGuess</h1>
+            <p id="login-instruction" style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;"></p>
+            
             <input type="text" id="alias-input" placeholder="Tu Apodo..." maxlength="15">
+            <span id="alias-warning-text" class="alias-warning">⚠️ Este nombre será permanente.</span>
+            
+            <div id="alias-display-container" style="display: none; margin-bottom: 20px;">
+                <span id="current-alias"></span>
+            </div>
+
             <div class="diff-container">
                 <button class="btn-diff" onclick="startGame('Fácil')">Fácil</button>
                 <button class="btn-diff" onclick="startGame('Normal')">Normal</button>
                 <button class="btn-diff" onclick="startGame('Difícil')">Difícil</button>
             </div>
-            <div class="creator-tag">MADE BY <span>RAGAMOOFI</span></div>
+            <div class="footer-login">MADE BY <span>RAGAMOOFI</span></div>
         </div>
     </div>
 
@@ -162,7 +156,7 @@
         <div class="header-container">
             <h1>FutGuess <span id="diff-badge" style="font-size: 0.75rem; vertical-align: middle; padding: 3px 8px; border-radius: 5px; margin-left: 10px; color: white; text-shadow: none;"></span></h1>
             <p class="subtitle">Adivina al crack mundial en tiempo récord.</p>
-            <p class="rules-text">Nuevo misterio cada <span>15 MINUTOS</span></p>
+            <p class="rules-text">Nuevo jugador cada <span>15 MINUTOS</span></p>
         </div>
 
         <div id="stopwatch">00:00.0</div>
@@ -175,18 +169,19 @@
             <div class="victory-hero">
                 <div class="club-badge-circle" id="victory-club-icon">⚽</div>
                 <div class="victory-title-area">
-                    <div class="streak-badge" id="streak-count">🔥 RACHA: 1</div>
-                    <h2 id="victory-title" style="margin: 0 0 5px 0; line-height: 1.1; color: #00ff88;">¡VICTORIA!</h2>
+                    <div class="streak-badge" id="streak-count">🔥 RACHA: 0</div>
+                    <h2 id="victory-title" style="margin: 0 0 5px 0; line-height: 1.1;">¡VICTORIA!</h2>
                     <div id="victory-phrase" style="font-style: italic; color: #bbb; font-size: 0.9rem;"></div>
-                    <div id="victory-player-name" style="color: #00ff88; font-weight: 800; font-size: 1.2rem;"></div>
+                    <div id="victory-player-name" style="font-weight: 800; font-size: 1.2rem;"></div>
                 </div>
             </div>
             
             <div id="victory-time" style="font-weight: 800; font-size: 1.1rem; margin-bottom: 5px; color: white; text-align: center;"></div>
             
-            <button id="share-btn-container" class="btn-share" onclick="shareToWhatsApp()">
-                Compartir en WhatsApp <span>📱</span>
-            </button>
+            <div class="victory-actions">
+                <button id="share-btn-container" class="btn-share" onclick="shareToWhatsApp()">Compartir en WhatsApp 📱</button>
+                <button class="btn-change-diff" onclick="backToMenu()">🔄 Cambiar Dificultad</button>
+            </div>
 
             <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #3a3a3c; text-align: center;">
                 <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
@@ -206,9 +201,15 @@
             <h3 id="lb-title-header">🏆 TOP 10 HISTÓRICO 🏆</h3>
             <div id="lb-list"><div class="lb-entry loading">Cargando base mundial...</div></div>
         </div>
+
+        <div class="footer-game">
+            <div class="funny-motto-footer">¿Eres tan cerdo como para estar en el top? 🐷</div>
+            MADE BY <span>RAGAMOOFI</span>
+        </div>
     </div>
 
-    <div class="footer">¿Crees saber de fútbol? Demuéstralo. <br> <span>MADE BY RAGAMOOFI</span></div>
+    <audio id="audio-trampa" src="trampa.mp3" preload="auto"></audio>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <script src="database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -226,69 +227,69 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // LLAVE MAESTRA PRO
+        const DB_KEY = "fg_pro_final_v1_"; 
+
         let targetPlayer = null; let startTime = null; let timerInterval = null;
-        let userAlias = ""; let gameOver = false; let guessedIds = [];
+        let userAlias = localStorage.getItem(DB_KEY + "alias") || ""; 
+        let gameOver = false; let guessedIds = [];
         let isTimerRunning = false; let selectedDifficulty = "";
         let finalGameTime = 0; 
         const msPerWindow = 1000 * 60 * 15;
 
-        function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
+        const frasesVictoria = ["¡Tienes más ojo que un ojeador del City!", "Ni el VAR te quita esta victoria.", "¡Fichaje estrella detectado!", "¡Estás para dirigir a la Selección!", "Sabes más de fútbol que Maldini.", "¡Qué clase! Pareces el 10 clásico."];
+        const frasesTrampa = ["Ese tiempo es humanamente imposible.", "El VAR ha detectado una trampa evidente.", "Tus datos son más falsos que un penal contra el local.", "¡Pillado! No seas como el Lean porfa."];
 
-        function selectTarget() {
-            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
-            const windowIdx = getWindowIndex();
-            let seed = (windowIdx * 16807) % 2147483647;
-            return filtered[seed % filtered.length];
-        }
+        window.onload = function() { refreshLoginScreen(); };
 
-        window.onload = function() {
-            checkLockout();
-        };
+        function refreshLoginScreen() {
+            const input = document.getElementById("alias-input");
+            const warning = document.getElementById("alias-warning-text");
+            const display = document.getElementById("alias-display-container");
+            const nameTxt = document.getElementById("current-alias");
+            const instruction = document.getElementById("login-instruction");
 
-        function checkLockout() {
-            if (localStorage.getItem("futguess_played_window") == getWindowIndex()) {
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("game-content").style.display = "block";
-                document.getElementById("input-wrapper").style.display = "none";
-                document.getElementById("stopwatch").style.display = "none";
-                document.getElementById("board-container").style.display = "none";
-                
-                const vPanel = document.getElementById("victory-panel");
-                vPanel.style.display = "block";
-                
-                document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
-                document.getElementById("victory-phrase").innerText = "Ya jugaste esta ronda. El último crack fue:";
-                
-                const lastPlayer = localStorage.getItem("futguess_last_player") || "???";
-                const lastClub = localStorage.getItem("futguess_last_club") || "";
-                const streak = localStorage.getItem("futguess_streak") || "0";
-                
-                document.getElementById("victory-player-name").innerText = lastPlayer;
-                document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
-                document.getElementById("victory-time").innerText = "";
-                document.getElementById("share-btn-container").style.display = "none";
-
-                if (lastClub) {
-                    const clubClean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
-                    document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clubClean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
-                }
-
-                startCooldownTimer();
-                listenToGlobalLeaderboard("Fácil"); 
+            if (userAlias) {
+                input.style.display = "none"; warning.style.display = "none";
+                display.style.display = "block"; nameTxt.innerText = `¡Hola, ${userAlias}! ⚽`;
+                instruction.innerText = "Selecciona un nivel para jugar";
+            } else {
+                input.style.display = "block"; warning.style.display = "block";
+                display.style.display = "none"; instruction.innerText = "Ingresa tu Alias para empezar";
             }
         }
 
+        function backToMenu() {
+            document.getElementById("victory-panel").style.display = "none";
+            document.getElementById("game-content").style.display = "none";
+            document.getElementById("login-screen").style.display = "flex";
+            refreshLoginScreen();
+            gameOver = false; guessedIds = []; isTimerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById("stopwatch").innerText = "00:00.0";
+        }
+
         function startGame(diff) {
-            const input = document.getElementById("alias-input");
-            if (!input.value.trim()) return alert("Ingresa un apodo.");
-            userAlias = input.value.trim();
+            if (!userAlias) {
+                const input = document.getElementById("alias-input");
+                if (!input.value.trim()) return alert("Ingresa un apodo.");
+                userAlias = input.value.trim();
+                localStorage.setItem(DB_KEY + "alias", userAlias);
+                db.collection("players_database").add({ name: userAlias, date: firebase.firestore.FieldValue.serverTimestamp() });
+            }
+            
             selectedDifficulty = diff;
             document.getElementById("login-screen").style.display = "none";
             document.getElementById("game-content").style.display = "block";
             const badge = document.getElementById("diff-badge");
             badge.innerText = diff;
             badge.style.backgroundColor = { "Fácil": "#538d4e", "Normal": "#b59f3b", "Difícil": "#d32f2f" }[diff];
-            initSession();
+
+            if (localStorage.getItem(`${DB_KEY}played_${selectedDifficulty}`) == getWindowIndex()) {
+                showLockoutScreen();
+            } else {
+                initSession();
+            }
             listenToGlobalLeaderboard(diff); 
         }
 
@@ -298,15 +299,49 @@
             gameOver = false; guessedIds = [];
             document.getElementById("board").innerHTML = "";
             document.getElementById("player-input").disabled = false;
+            document.getElementById("player-input").style.display = "block";
+            document.getElementById("input-wrapper").style.display = "block";
+            document.getElementById("stopwatch").style.display = "block";
+            document.getElementById("board-container").style.display = "block";
             document.getElementById("victory-panel").style.display = "none";
+            document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("empty-state").style.display = "block";
             document.getElementById("player-input").focus();
+            startCooldownTimer();
         }
 
+        function showLockoutScreen() {
+            document.getElementById("input-wrapper").style.display = "none";
+            document.getElementById("stopwatch").style.display = "none";
+            document.getElementById("board-container").style.display = "none";
+            const vPanel = document.getElementById("victory-panel");
+            vPanel.style.display = "block";
+            vPanel.style.borderColor = "#00ff88";
+            document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
+            document.getElementById("victory-title").style.color = "#00ff88";
+            document.getElementById("victory-phrase").innerText = "Ya jugaste esta dificultad. El crack fue:";
+            const lastPlayer = localStorage.getItem(`${DB_KEY}lp_${selectedDifficulty}`) || "???";
+            const lastClub = localStorage.getItem(`${DB_KEY}lc_${selectedDifficulty}`) || "";
+            const streak = localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0";
+            document.getElementById("victory-player-name").innerText = lastPlayer;
+            document.getElementById("victory-player-name").style.color = "#00ff88";
+            document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
+            document.getElementById("victory-time").innerText = "";
+            document.getElementById("share-btn-container").style.display = "none";
+            if (lastClub) {
+                const clean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
+                document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
+            }
+            startCooldownTimer();
+        }
+
+        function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
+
         function startCooldownTimer() {
-            const timerObj = setInterval(() => {
+            if (window.cdInt) clearInterval(window.cdInt);
+            window.cdInt = setInterval(() => {
                 const diff = ((getWindowIndex() + 1) * msPerWindow) - Date.now();
-                if (diff <= 0) { clearInterval(timerObj); location.reload(); return; }
+                if (diff <= 0) { clearInterval(window.cdInt); location.reload(); return; }
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
                 document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
@@ -322,58 +357,74 @@
             document.getElementById("player-input").value = "";
         }
 
+        function selectTarget() {
+            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
+            const windowIdx = getWindowIndex();
+            let seed = (windowIdx * 16807) % 2147483647;
+            return filtered[seed % filtered.length];
+        }
+
         function endGame() {
-            gameOver = true;
-            clearInterval(timerInterval);
+            gameOver = true; clearInterval(timerInterval);
             document.getElementById("player-input").disabled = true;
             finalGameTime = (Date.now() - startTime) / 1000; 
+            const vPanel = document.getElementById("victory-panel");
 
+            // --- TRAMPOSO ---
             if (finalGameTime < 4.5 && guessedIds.length === 1) {
+                const audio = document.getElementById("audio-trampa");
+                audio.load(); audio.play().catch(() => {});
+                vPanel.style.display = "block";
+                vPanel.style.borderColor = "#ff4d4d";
+                vPanel.style.boxShadow = "0 0 30px rgba(255, 77, 77, 0.4)";
                 document.getElementById("victory-title").innerText = "🚨 TRAMPOSO 🚨";
-                document.getElementById("victory-phrase").innerText = "¡No seas como el Lean porfa!";
-                document.getElementById("victory-panel").style.display = "block";
+                document.getElementById("victory-title").style.color = "#ff4d4d";
+                document.getElementById("victory-phrase").innerText = frasesTrampa[Math.floor(Math.random() * frasesTrampa.length)];
+                document.getElementById("victory-player-name").innerText = "¡No seas como el Lean porfa!";
+                document.getElementById("victory-player-name").style.color = "#ffaa00";
+                document.getElementById("share-btn-container").style.display = "none";
+                localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
                 return;
             }
 
-            const clubNameClean = targetPlayer.club.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
-            const logoContainer = document.getElementById("victory-club-icon");
-            logoContainer.innerHTML = `<img src="logos/${clubNameClean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
+            // --- VICTORIA CON CONFETI ---
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#00ff88', '#ffffff'] });
+            const clean = targetPlayer.club.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
+            document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
 
-            let streak = parseInt(localStorage.getItem("futguess_streak") || "0") + 1;
-            localStorage.setItem("futguess_streak", streak);
-            localStorage.setItem("futguess_last_player", targetPlayer.fullName);
-            localStorage.setItem("futguess_last_club", targetPlayer.club);
-            
+            let streak = parseInt(localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0") + 1;
+            localStorage.setItem(`${DB_KEY}st_${selectedDifficulty}`, streak);
+            localStorage.setItem(`${DB_KEY}lp_${selectedDifficulty}`, targetPlayer.fullName);
+            localStorage.setItem(`${DB_KEY}lc_${selectedDifficulty}`, targetPlayer.club);
+            localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
+
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
+            document.getElementById("victory-title").innerText = "¡VICTORIA!";
+            document.getElementById("victory-title").style.color = "#00ff88";
+            document.getElementById("victory-phrase").innerText = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
             document.getElementById("victory-player-name").innerText = targetPlayer.fullName;
-
-            saveScoreGlobal(userAlias, finalGameTime);
-            localStorage.setItem("futguess_played_window", getWindowIndex());
-            startCooldownTimer();
-            
-            document.getElementById("victory-title").innerText = "🏆 ¡VICTORIA! 🏆";
+            document.getElementById("victory-player-name").style.color = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalGameTime)}`;
-            document.getElementById("victory-phrase").innerText = "¡Eres un experto de los datos!";
-            document.getElementById("victory-panel").style.display = "block";
+            
+            db.collection("leaderboards").add({ name: userAlias, time: finalGameTime, difficulty: selectedDifficulty, date: firebase.firestore.FieldValue.serverTimestamp() });
+            vPanel.style.display = "block";
             document.getElementById("share-btn-container").style.display = "flex";
         }
 
         function shareToWhatsApp() {
             const timeStr = formatTimeMinSec(finalGameTime);
-            const streak = localStorage.getItem("futguess_streak") || "1";
-            const attempts = guessedIds.length;
-            let text = "⚽ *FUTGUESS* (" + selectedDifficulty + ")\n\n🔥 *Racha:* " + streak + "\n⏱️ *Tiempo:* " + timeStr + "\n👟 *Intentos:* " + attempts + "\n\n🏆 ¡Adiviné al crack! ¿Puedes ganarme? 🏆\n\nhttps://ragamoofi.github.io/futguess/";
-            const encodedText = encodeURIComponent(text);
-            window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank");
+            const streak = localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "1";
+            let text = "⚽ *FUTGUESS* (" + selectedDifficulty + ")\n\n🔥 *Racha:* " + streak + "\n⏱️ *Tiempo:* " + timeStr + "\n👟 *Intentos:* " + guessedIds.length + "\n\n🏆 ¡Adiviné al crack! ¿Puedes ganarme? 🏆\n\nhttps://ragamoofi.github.io/futguess/";
+            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
         }
 
         function listenToGlobalLeaderboard(diff) {
             document.getElementById("lb-title-header").innerText = `🏆 TOP 10 HISTÓRICO (${diff}) 🏆`;
-            db.collection("leaderboards").where("difficulty", "==", diff).orderBy("time", "asc").limit(10).onSnapshot((snapshot) => {
+            db.collection("leaderboards").where("difficulty", "==", diff).orderBy("time", "asc").limit(10).onSnapshot((snap) => {
                 const list = document.getElementById("lb-list");
-                if (snapshot.empty) { list.innerHTML = "<div class='empty-state'>Sin récords.</div>"; return; }
+                if (snap.empty) { list.innerHTML = "<div class='empty-state'>Sin récords aún.</div>"; return; }
                 let html = ""; let rank = 1;
-                snapshot.forEach((doc) => {
+                snap.forEach((doc) => {
                     const data = doc.data();
                     html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color:#00ff88; font-weight:800;">${formatTimeMinSec(data.time)}</span></div>`;
                     rank++;
@@ -382,12 +433,8 @@
             });
         }
 
-        function saveScoreGlobal(name, time) {
-            db.collection("leaderboards").add({ name, time, difficulty: selectedDifficulty, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        }
-
-        function formatTimeMinSec(totalSeconds) {
-            const m = Math.floor(totalSeconds / 60); const s = Math.floor(totalSeconds % 60); const ms = Math.floor((totalSeconds % 1) * 10);
+        function formatTimeMinSec(t) {
+            const m = Math.floor(t / 60); const s = Math.floor(t % 60); const ms = Math.floor((t % 1) * 10);
             return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}.${ms}`;
         }
 
@@ -405,11 +452,20 @@
         const inputEl = document.getElementById("player-input");
         const suggsEl = document.getElementById("suggestions");
         inputEl.addEventListener("input", function() {
-            if (!isTimerRunning && this.value.trim() !== "") { isTimerRunning = true; startTime = Date.now(); timerInterval = setInterval(() => { if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); }, 100); }
+            if (!isTimerRunning && this.value.trim() !== "") { 
+                isTimerRunning = true; startTime = Date.now(); 
+                timerInterval = setInterval(() => { if(!gameOver) document.getElementById("stopwatch").innerText = formatTimeMinSec((Date.now()-startTime)/1000); }, 100); 
+            }
             const val = this.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             if (!val) { suggsEl.style.display = "none"; return; }
             const matches = players.filter(p => p.fullName.normalize("NFD").toLowerCase().includes(val) && !guessedIds.includes(p.fullName)).slice(0, 8);
-            suggsEl.innerHTML = matches.map(m => `<div class="suggestion-item" onclick='makeGuess(${JSON.stringify(m)})'><strong>${m.fullName}</strong> <small>(${m.club})</small></div>`).join("");
+            suggsEl.innerHTML = "";
+            matches.forEach(m => {
+                const div = document.createElement("div"); div.className = "suggestion-item";
+                div.innerHTML = `<strong>${m.fullName}</strong> <small>(${m.club})</small>`;
+                div.onclick = () => { makeGuess(m); suggsEl.style.display = "none"; };
+                suggsEl.appendChild(div);
+            });
             suggsEl.style.display = matches.length ? "block" : "none";
         });
         document.addEventListener("click", (e) => { if (e.target !== inputEl) suggsEl.style.display = "none"; });
