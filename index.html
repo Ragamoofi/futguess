@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FutGuess: Speed Challenge</title>
 
-    <meta property="og:title" content="FutGuess: Speed Challenge ⚽" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ragamoofi.github.io/futguess/" />
-    <meta property="og:description" content="¿Eres tan cerdo como para estar en el top? Adivina al crack mundial en tiempo récord." />
-    <meta name="theme-color" content="#00ff88">
-    <meta property="og:image" content="https://ragamoofi.github.io/futguess/logos/soccer-ball.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+<meta property="og:title" content="FutGuess: Speed Challenge ⚽" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://ragamoofi.github.io/futguess/" />
+<meta property="og:description" content="¿Eres tan cerdo como para estar en el top? Adivina al crack mundial en tiempo récord." />
+<meta name="theme-color" content="#00ff88">
+
+<meta property="og:image" content="https://ragamoofi.github.io/futguess/logos/soccer-ball.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
 
@@ -65,7 +66,7 @@
         }
         .btn-diff:hover { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 0 30px rgba(0, 255, 136, 0.7); }
 
-        /* Made By en Login */
+        /* Made By en Login (más claro) */
         .footer-login { margin-top: 25px; font-size: 0.65rem; color: #bbb; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .footer-login span { color: #00ff88; text-shadow: 0 0 5px rgba(0, 255, 136, 0.3); }
 
@@ -116,19 +117,8 @@
         .streak-badge { display: inline-block; background: rgba(0, 255, 136, 0.1); color: #00ff88; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; border: 1px solid #00ff88; }
 
         .victory-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        
-        /* BOTÓN DE WHATSAPP */
-        .btn-share { 
-            width: 100%; padding: 14px; background: #25D366; color: white; 
-            border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; 
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; 
-            justify-content: center; gap: 10px; font-size: 0.95rem;
-        }
-        .btn-change-diff { 
-            width: 100%; padding: 12px; background: transparent; color: #00ff88; 
-            border: 2px solid #00ff88; border-radius: 12px; font-weight: 800; 
-            text-transform: uppercase; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
-        }
+        .btn-share { width: 100%; padding: 14px; background: #25D366; color: white; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-change-diff { width: 100%; padding: 12px; background: transparent; color: #00ff88; border: 2px solid #00ff88; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
         .btn-share:hover, .btn-change-diff:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         #leaderboard { 
@@ -181,7 +171,7 @@
 
         <div id="stopwatch">00:00.0</div>
         <div id="input-wrapper" style="position: relative;">
-            <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off" onpaste="return false;">
+            <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off">
             <div id="suggestions"></div>
         </div>
 
@@ -204,7 +194,7 @@
             </div>
 
             <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #3a3a3c; text-align: center;">
-                <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Podrás jugar este nivel de nuevo en:</p>
+                <p id="cooldown-msg" style="font-size: 0.75rem; color: #888; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
                 <div id="cooldown-timer" style="font-size: 1.8rem; color: #00ff88; font-weight: 900;">00:00</div>
             </div>
         </div>
@@ -247,7 +237,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // LLAVE MAESTRA
+        // LLAVE MAESTRA PRO (Sin Base64)
         const DB_KEY = "fg_pro_final_v1_"; 
 
         let targetPlayer = null; let startTime = null; let timerInterval = null;
@@ -255,23 +245,12 @@
         let gameOver = false; let guessedIds = [];
         let isTimerRunning = false; let selectedDifficulty = "";
         let finalGameTime = 0; 
-        
-        // 15 MINUTOS DE ESPERA DESPUÉS DE GANAR
-        const MS_COOLDOWN = 15 * 60 * 1000; 
+        const msPerWindow = 1000 * 60 * 15;
 
         const frasesVictoria = ["¡Tienes más ojo que un ojeador del City!", "Ni el VAR te quita esta victoria.", "¡Fichaje estrella detectado!", "¡Estás para dirigir a la Selección!", "Sabes más de fútbol que Maldini.", "¡Qué clase! Pareces el 10 clásico."];
         const frasesTrampa = ["Ese tiempo es humanamente imposible.", "El VAR ha detectado una trampa evidente.", "Tus datos son más falsos que un penal contra el local.", "¡Pillado! No seas como el Lean porfa."];
 
         window.onload = function() { refreshLoginScreen(); };
-
-        // --- FUNCIÓN DE DESENCRIPTADO BASE64 ---
-        function decodeName(encodedName) {
-            try {
-                return decodeURIComponent(atob(encodedName));
-            } catch(e) {
-                return encodedName; // Si el nombre no está encriptado, lo devuelve tal cual
-            }
-        }
 
         function refreshLoginScreen() {
             const input = document.getElementById("alias-input");
@@ -316,21 +295,12 @@
             badge.innerText = diff;
             badge.style.backgroundColor = { "Fácil": "#538d4e", "Normal": "#b59f3b", "Difícil": "#d32f2f" }[diff];
 
-            // VERIFICA SI ESTÁ EN COOLDOWN EXACTO DE 15 MIN PARA ESTA DIFICULTAD
-            const lastPlay = localStorage.getItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
-            if (lastPlay && (Date.now() - parseInt(lastPlay) < MS_COOLDOWN)) {
+            if (localStorage.getItem(`${DB_KEY}played_${selectedDifficulty}`) == getWindowIndex()) {
                 showLockoutScreen();
             } else {
-                localStorage.removeItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
                 initSession();
             }
             listenToGlobalLeaderboard(diff); 
-        }
-
-        // --- SISTEMA ALEATORIO 100% (F5 seguro) ---
-        function selectTarget() {
-            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
-            return filtered[Math.floor(Math.random() * filtered.length)];
         }
 
         function initSession() {
@@ -346,8 +316,8 @@
             document.getElementById("victory-panel").style.display = "none";
             document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("empty-state").style.display = "block";
-            document.getElementById("player-input").value = "";
             document.getElementById("player-input").focus();
+            startCooldownTimer();
         }
 
         function showLockoutScreen() {
@@ -361,7 +331,7 @@
             
             document.getElementById("victory-title").innerText = "⏳ ¡ESPERA! ⏳";
             document.getElementById("victory-title").style.color = "#00ff88";
-            document.getElementById("victory-phrase").innerText = "Ya adivinaste en esta dificultad. El crack fue:";
+            document.getElementById("victory-phrase").innerText = "Ya jugaste esta dificultad. El crack fue:";
             
             const lastPlayer = localStorage.getItem(`${DB_KEY}lp_${selectedDifficulty}`) || "???";
             const lastClub = localStorage.getItem(`${DB_KEY}lc_${selectedDifficulty}`) || "";
@@ -370,10 +340,21 @@
             document.getElementById("victory-player-name").innerText = lastPlayer;
             document.getElementById("victory-player-name").style.color = "#00ff88";
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
-            document.getElementById("victory-time").innerText = "";
             
-            // ASEGURAMOS QUE EL BOTÓN DE WHATSAPP SE VEA EN MODO DE ESPERA TAMBIÉN
-            document.getElementById("share-btn-container").style.display = "flex";
+            // Mostrar tiempo en pantalla de espera
+            const lastTime = localStorage.getItem(`${DB_KEY}time_${selectedDifficulty}`);
+            if(lastTime && localStorage.getItem(`${DB_KEY}cheat_${selectedDifficulty}`) !== "true") {
+                document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(parseFloat(lastTime))}`;
+            } else {
+                document.getElementById("victory-time").innerText = "";
+            }
+
+            // Mostrar el botón de WSP en espera, EXCEPTO si hizo trampa
+            if(localStorage.getItem(`${DB_KEY}cheat_${selectedDifficulty}`) === "true") {
+                document.getElementById("share-btn-container").style.display = "none";
+            } else {
+                document.getElementById("share-btn-container").style.display = "flex";
+            }
             
             if (lastClub) {
                 const clean = lastClub.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
@@ -382,22 +363,13 @@
             startCooldownTimer();
         }
 
-        // TIMER RELATIVO (15 min desde la victoria)
+        function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
+
         function startCooldownTimer() {
             if (window.cooldownInterval) clearInterval(window.cooldownInterval);
             window.cooldownInterval = setInterval(() => {
-                const lastPlay = localStorage.getItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
-                if (!lastPlay) { clearInterval(window.cooldownInterval); return; }
-                
-                const unlockTime = parseInt(lastPlay) + MS_COOLDOWN;
-                const diff = unlockTime - Date.now();
-                
-                if (diff <= 0) { 
-                    clearInterval(window.cooldownInterval); 
-                    localStorage.removeItem(`${DB_KEY}cooldown_${selectedDifficulty}`);
-                    location.reload(); 
-                    return; 
-                }
+                const diff = ((getWindowIndex() + 1) * msPerWindow) - Date.now();
+                if (diff <= 0) { clearInterval(window.cooldownInterval); location.reload(); return; }
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
                 document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
@@ -405,15 +377,19 @@
         }
 
         function makeGuess(guessed) {
-            const decodedGuessedName = decodeName(guessed.fullName);
-            if (gameOver || guessedIds.includes(decodedGuessedName)) return;
+            if (gameOver || guessedIds.includes(guessed.fullName)) return;
             document.getElementById("empty-state").style.display = "none";
-            guessedIds.push(decodedGuessedName);
+            guessedIds.push(guessed.fullName);
             createRow(guessed);
-            
-            const decodedTargetName = decodeName(targetPlayer.fullName);
-            if (decodedGuessedName === decodedTargetName) endGame();
+            if (guessed.fullName === targetPlayer.fullName) endGame();
             document.getElementById("player-input").value = "";
+        }
+
+        function selectTarget() {
+            const filtered = players.filter(p => p.difficulty === selectedDifficulty);
+            const windowIdx = getWindowIndex();
+            let seed = (windowIdx * 16807) % 2147483647;
+            return filtered[seed % filtered.length];
         }
 
         function endGame() {
@@ -431,50 +407,39 @@
                 vPanel.style.borderColor = "#ff4d4d";
                 vPanel.style.boxShadow = "0 0 30px rgba(255, 77, 77, 0.4)";
                 
-                // ICONO BANDERA PIRATA PARA TRAMPOSO
-                document.getElementById("victory-club-icon").innerHTML = "🏴‍☠️";
-                document.getElementById("victory-club-icon").style.fontSize = "5rem";
-                
                 document.getElementById("victory-title").innerText = "🚨 TRAMPOSO 🚨";
                 document.getElementById("victory-title").style.color = "#ff4d4d";
                 document.getElementById("victory-phrase").innerText = frasesTrampa[Math.floor(Math.random() * frasesTrampa.length)];
                 document.getElementById("victory-player-name").innerText = "¡No seas como el Lean porfa!";
                 document.getElementById("victory-player-name").style.color = "#ffaa00";
-                
-                // ESCONDEMOS EL BOTON DE WHATSAPP PARA TRAMPOSOS
                 document.getElementById("share-btn-container").style.display = "none";
                 
-                // Castigo de 15 min
-                localStorage.setItem(`${DB_KEY}cooldown_${selectedDifficulty}`, Date.now());
-                startCooldownTimer();
+                localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
+                localStorage.setItem(`${DB_KEY}cheat_${selectedDifficulty}`, "true");
                 return;
             }
 
-            // --- VICTORIA LEGAL CON CONFETI ---
+            // --- VICTORIA CON CONFETI ---
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#00ff88', '#ffffff'] });
-            
             const clean = targetPlayer.club.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-").replace(/\./g, "");
-            document.getElementById("victory-club-icon").style.fontSize = "4rem"; // reset font size
             document.getElementById("victory-club-icon").innerHTML = `<img src="logos/${clean}.png" onerror="this.parentElement.innerHTML='⚽'" style="width:100%; height:100%; object-fit:contain;">`;
 
             let streak = parseInt(localStorage.getItem(`${DB_KEY}st_${selectedDifficulty}`) || "0") + 1;
-            const decodedTargetName = decodeName(targetPlayer.fullName);
-            
             localStorage.setItem(`${DB_KEY}st_${selectedDifficulty}`, streak);
-            localStorage.setItem(`${DB_KEY}lp_${selectedDifficulty}`, decodedTargetName);
+            localStorage.setItem(`${DB_KEY}lp_${selectedDifficulty}`, targetPlayer.fullName);
             localStorage.setItem(`${DB_KEY}lc_${selectedDifficulty}`, targetPlayer.club);
-            localStorage.setItem(`${DB_KEY}att_${selectedDifficulty}`, guessedIds.length); // Guardamos intentos
-            localStorage.setItem(`${DB_KEY}time_${selectedDifficulty}`, finalGameTime); // Guardamos tiempo
+            localStorage.setItem(`${DB_KEY}played_${selectedDifficulty}`, getWindowIndex());
             
-            // INICIA LA ESPERA DE 15 MIN
-            localStorage.setItem(`${DB_KEY}cooldown_${selectedDifficulty}`, Date.now());
-            startCooldownTimer();
+            // GUARDAR VARIABLES DE WHATSAPP
+            localStorage.setItem(`${DB_KEY}att_${selectedDifficulty}`, guessedIds.length);
+            localStorage.setItem(`${DB_KEY}time_${selectedDifficulty}`, finalGameTime);
+            localStorage.setItem(`${DB_KEY}cheat_${selectedDifficulty}`, "false");
 
             document.getElementById("streak-count").innerText = `🔥 RACHA: ${streak}`;
             document.getElementById("victory-title").innerText = "¡VICTORIA!";
             document.getElementById("victory-title").style.color = "#00ff88";
             document.getElementById("victory-phrase").innerText = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
-            document.getElementById("victory-player-name").innerText = decodedTargetName;
+            document.getElementById("victory-player-name").innerText = targetPlayer.fullName;
             document.getElementById("victory-player-name").style.color = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalGameTime)}`;
             
@@ -484,7 +449,7 @@
         }
 
         function shareToWhatsApp() {
-            // Recuperamos datos por si la página se recargó y las variables están en 0
+            // Recupera la info de LocalStorage por si recargó la página
             let time = finalGameTime;
             if (time === 0) time = parseFloat(localStorage.getItem(`${DB_KEY}time_${selectedDifficulty}`)) || 0;
             
@@ -519,10 +484,7 @@
 
         function createRow(char) {
             const row = document.createElement("div"); row.classList.add("row");
-            const decodedCharName = decodeName(char.fullName);
-            const decodedTargetName = decodeName(targetPlayer.fullName);
-
-            const fields = [{v: decodedCharName, t: decodedTargetName}, {v: char.league, t: targetPlayer.league}, {v: char.club, t: targetPlayer.club}, {v: char.country, t: targetPlayer.country}, {v: char.position, t: targetPlayer.position}, {v: char.age, t: targetPlayer.age, isAge: true}];
+            const fields = [{v: char.fullName, t: targetPlayer.fullName}, {v: char.league, t: targetPlayer.league}, {v: char.club, t: targetPlayer.club}, {v: char.country, t: targetPlayer.country}, {v: char.position, t: targetPlayer.position}, {v: char.age, t: targetPlayer.age, isAge: true}];
             fields.forEach((f) => {
                 const box = document.createElement("div"); box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
                 if (f.isAge) box.innerText = `${f.v} ${f.v > f.t ? "⬇️" : f.v < f.t ? "⬆️" : ""}`; else box.innerText = f.v;
@@ -540,17 +502,11 @@
             }
             const val = this.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             if (!val) { suggsEl.style.display = "none"; return; }
-            
-            const matches = players.filter(p => {
-                const decodedName = decodeName(p.fullName);
-                return decodedName.normalize("NFD").toLowerCase().includes(val) && !guessedIds.includes(decodedName);
-            }).slice(0, 8);
-
+            const matches = players.filter(p => p.fullName.normalize("NFD").toLowerCase().includes(val) && !guessedIds.includes(p.fullName)).slice(0, 8);
             suggsEl.innerHTML = "";
             matches.forEach(m => {
-                const decodedMatchName = decodeName(m.fullName);
                 const div = document.createElement("div"); div.className = "suggestion-item";
-                div.innerHTML = `<strong>${decodedMatchName}</strong> <small>(${m.club})</small>`;
+                div.innerHTML = `<strong>${m.fullName}</strong> <small>(${m.club})</small>`;
                 div.onclick = () => { makeGuess(m); suggsEl.style.display = "none"; };
                 suggsEl.appendChild(div);
             });
