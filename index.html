@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FutGuess: Speed Challenge</title>
     <style>
-        /* FUENTE INTER Y ESTILOS */
+        /* FUENTE INTER Y ESTILOS BASE */
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #121213; color: #ffffff; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; letter-spacing: -0.01em; min-height: 100vh; }
         .header-container { text-align: center; margin-bottom: 25px; }
         h1 { color: #00ff88; margin: 0 0 10px 0; letter-spacing: 4px; text-transform: uppercase; font-weight: 900; font-size: 2.5rem; text-shadow: 0 0 15px rgba(0, 255, 136, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -13,13 +13,29 @@
         .subtitle { color: #e0e0e0; font-size: 1.05rem; margin: 0 0 5px 0; font-weight: 500; }
         .rules-text { color: #777; font-size: 0.85rem; margin: 0; }
         .rules-text span { color: #00ff88; font-weight: bold; }
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(18, 18, 19, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
-        .login-box { background: #2d2d30; padding: 40px; border-radius: 20px; border: 2px solid #3a3a3c; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        
+        /* PANTALLA DE INICIO REFORMADA */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(18, 18, 19, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        .login-box { background: #2d2d30; padding: 40px; border-radius: 24px; border: 2px solid #3a3a3c; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+        
+        /* BOTONES DE DIFICULTAD */
+        .diff-container { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 25px; }
+        .btn-diff { padding: 16px; border-radius: 14px; border: none; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 1rem; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .btn-facil { background-color: #538d4e; color: white; }
+        .btn-facil:hover { background-color: #6aaa64; transform: scale(1.03); }
+        
+        .btn-normal { background-color: #b59f3b; color: white; }
+        .btn-normal:hover { background-color: #c9b458; transform: scale(1.03); }
+        
+        .btn-dificil { background-color: #d32f2f; color: white; }
+        .btn-dificil:hover { background-color: #f44336; transform: scale(1.03); }
+
+        /* INTERFAZ DE JUEGO */
         #game-content { display: none; width: 100%; max-width: 780px; text-align: center; }
-        input[type="text"] { width: 100%; padding: 15px; background-color: #2d2d30; color: white; border: 2px solid #3a3a3c; border-radius: 12px; font-size: 1.1rem; text-align: center; box-sizing: border-box; margin-bottom: 10px; transition: all 0.2s ease; }
-        input[type="text"]:focus { outline: none; border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.1); }
-        button { padding: 15px 30px; background-color: #00ff88; color: #121213; font-weight: 900; border: none; border-radius: 12px; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
-        button:hover { background-color: #00cc6a; transform: translateY(-2px); }
+        input[type="text"] { width: 100%; padding: 18px; background-color: #2d2d30; color: white; border: 2px solid #3a3a3c; border-radius: 12px; font-size: 1.1rem; text-align: center; box-sizing: border-box; margin-bottom: 10px; transition: all 0.2s ease; }
+        input[type="text"]:focus { outline: none; border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.15); }
+        
         #stopwatch { font-size: 3.5rem; color: #00ff88; font-weight: 900; margin: 10px 0 25px 0; font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
         #board-container { width: 100%; margin-top: 10px; overflow-x: auto; }
         .row-header { display: grid; grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; gap: 10px; margin-bottom: 12px; min-width: 680px; font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
@@ -40,7 +56,6 @@
         #leaderboard { margin-top: 35px; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto; background: #1e1e20; border-radius: 15px; padding: 25px; border: 1px solid #3a3a3c; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         #leaderboard h3 { color: #00ff88; margin-top: 0; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1.5px; text-align: center; border-bottom: 1px solid #3a3a3c; padding-bottom: 15px;}
         .lb-entry { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d2d30; font-size: 0.95rem; }
-        .lb-entry:last-child { border-bottom: none; }
         .lb-entry.loading { color: #888; text-align: center; font-style: italic; display: block; }
         #suggestions { display: none; position: absolute; width: 100%; background: #2d2d30; border: 2px solid #00ff88; border-radius: 0 0 12px 12px; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: left; border-bottom: 1px solid #3a3a3c; transition: 0.2s;}
@@ -53,15 +68,20 @@
     <div id="login-screen">
         <div class="login-box">
             <h1 style="font-size: 2.2rem; margin-bottom: 5px;">FutGuess</h1>
-            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px;">El reloj empezará a correr cuando escribas tu primer intento.</p>
-            <input type="text" id="alias-input" placeholder="Ingresa tu alias o apodo..." maxlength="15">
-            <button onclick="startGame()">Comenzar Reto</button>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px;">Ingresa tu alias y elige un nivel para comenzar.</p>
+            <input type="text" id="alias-input" placeholder="Tu Apodo..." maxlength="15">
+            
+            <div class="diff-container">
+                <button class="btn-diff btn-facil" onclick="startGame('Fácil')">🌟 Nivel Fácil</button>
+                <button class="btn-diff btn-normal" onclick="startGame('Normal')">⚽ Nivel Normal</button>
+                <button class="btn-diff btn-dificil" onclick="startGame('Difícil')">🔥 Nivel Difícil</button>
+            </div>
         </div>
     </div>
 
     <div id="game-content">
         <div class="header-container">
-            <h1>FutGuess <span class="badge-2026">2026</span></h1>
+            <h1>FutGuess <span id="diff-badge" style="font-size: 0.8rem; vertical-align: middle; padding: 4px 8px; border-radius: 6px; margin-left: 10px; color: white;"></span></h1>
             <p class="subtitle">Adivina al crack mundial en tiempo récord.</p>
             <p class="rules-text">Base de datos élite • Nuevo misterio cada <span>15 MINUTOS</span></p>
         </div>
@@ -79,7 +99,7 @@
             <div id="victory-phrase"></div>
             
             <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #3a3a3c;">
-                <p style="font-size: 0.85rem; color: #aaa; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
+                <p id="cooldown-msg" style="font-size: 0.85rem; color: #aaa; margin: 0 0 5px 0; text-transform: uppercase;">Próximo jugador en:</p>
                 <div id="cooldown-timer" style="font-size: 2.2rem; color: #00ff88; font-weight: 900; font-variant-numeric: tabular-nums; text-shadow: 0 0 10px rgba(0,255,136,0.3);">00:00</div>
             </div>
         </div>
@@ -95,7 +115,7 @@
         </div>
 
         <div id="leaderboard">
-            <h3>🏆 Mejores Tiempos (Mundial) 🏆</h3>
+            <h3 id="lb-title-header">🏆 Mejores Tiempos 🏆</h3>
             <div id="lb-list"><div class="lb-entry loading">Cargando base de datos mundial...</div></div>
         </div>
     </div>
@@ -103,24 +123,21 @@
     <div class="footer">¿Crees saber de fútbol? Demuéstralo.</div>
 
     <script src="database.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>
-        // --- PEGA TU FIREBASE CONFIG AQUÍ OTRA VEZ ---
+        // --- PEGA TU FIREBASE CONFIG AQUÍ ---
         const firebaseConfig = {
-  apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
-  authDomain: "futguess-70a40.firebaseapp.com",
-  projectId: "futguess-70a40",
-  storageBucket: "futguess-70a40.firebasestorage.app",
-  messagingSenderId: "556929749278",
-  appId: "1:556929749278:web:a9ce3bb80d9552d8c8390f"
-};
-
+          apiKey: "AIzaSyAenK5z3CeFJKYmaVQN3fKR_Qw_8rQmJMc",
+          authDomain: "futguess-70a40.firebaseapp.com",
+          projectId: "futguess-70a40",
+          storageBucket: "futguess-70a40.firebasestorage.app",
+          messagingSenderId: "556929749278",
+          appId: "1:556929749278:web:a9ce3bb80d9552d8c8390f"
+        };
         // ------------------------------------
 
-        // Iniciar Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -131,8 +148,9 @@
         let gameOver = false;
         let guessedIds = [];
         let isTimerRunning = false;
+        let selectedDifficulty = "";
 
-        const msPerWindow = 1000 * 60 * 15; // 15 Minutos
+        const msPerWindow = 1000 * 60 * 15;
 
         const frasesVictoria = [
             "¡Ni Pep Guardiola lo hubiera adivinado tan rápido!",
@@ -151,12 +169,13 @@
         function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
 
         function selectTarget() {
+            // Filtramos los jugadores por la dificultad seleccionada
+            const filteredPlayers = players.filter(p => p.difficulty === selectedDifficulty);
             const windowIdx = getWindowIndex();
             let seed = (windowIdx * 16807) % 2147483647;
-            return players[seed % players.length];
+            return filteredPlayers[seed % filteredPlayers.length];
         }
 
-        // --- COMPROBAR CANDADO ANTITRAMPAS AL CARGAR LA PÁGINA ---
         window.onload = function() {
             checkLockout();
         };
@@ -166,52 +185,43 @@
             const lastPlayedWindow = localStorage.getItem("futguess_played_window");
 
             if (lastPlayedWindow == currentWindow) {
-                // Ya jugó esta ronda, bloquear el juego
                 document.getElementById("login-screen").style.display = "none";
                 document.getElementById("game-content").style.display = "block";
-                
-                // Ocultar zonas de juego
                 document.getElementById("input-wrapper").style.display = "none";
                 document.getElementById("stopwatch").style.display = "none";
                 document.getElementById("board-container").style.display = "none";
                 
-                // Configurar y mostrar panel de espera
                 const vPanel = document.getElementById("victory-panel");
                 vPanel.style.display = "block";
-                document.getElementById("victory-title").innerText = "⏳ ¡YA JUGASTE! ⏳";
+                document.getElementById("victory-title").innerText = "⏳ ¡PACIENCIA! ⏳";
                 document.getElementById("victory-time").innerText = "";
-                document.getElementById("victory-phrase").innerText = "Solo se permite un intento por dispositivo. ¡Los récords no se farmean!";
+                document.getElementById("victory-phrase").innerText = "Ya agotaste tu intento en esta ventana de 15 minutos. ¡Vuelve pronto crack!";
                 
                 startCooldownTimer();
-                listenToGlobalLeaderboard();
+                // Por defecto mostramos la tabla de Fácil si está bloqueado, pero esto se ajustará al jugar
+                listenToGlobalLeaderboard("Fácil"); 
             }
         }
 
-        // --- SISTEMA DE LEADERBOARD EN TIEMPO REAL CON FIREBASE ---
-        function listenToGlobalLeaderboard() {
+        function listenToGlobalLeaderboard(diff) {
             const currentWindow = getWindowIndex(); 
+            document.getElementById("lb-title-header").innerText = `🏆 Top 10 (${diff}) 🏆`;
             
             db.collection("leaderboards")
               .where("windowIndex", "==", currentWindow)
+              .where("difficulty", "==", diff) // AHORA FILTRAMOS TAMBIÉN POR DIFICULTAD
               .orderBy("time", "asc")
               .limit(10)
               .onSnapshot((snapshot) => {
                   const list = document.getElementById("lb-list");
                   if (snapshot.empty) {
-                      list.innerHTML = "<div class='empty-state' style='padding: 10px 0;'>Aún nadie ha adivinado a este jugador. ¡Sé el primero!</div>";
+                      list.innerHTML = "<div class='empty-state' style='padding: 10px 0;'>Aún nadie ha adivinado a este jugador.</div>";
                       return;
                   }
-
-                  let html = "";
-                  let rank = 1;
+                  let html = ""; let rank = 1;
                   snapshot.forEach((doc) => {
                       const data = doc.data();
-                      html += `
-                          <div class="lb-entry">
-                              <span><strong>${rank}.</strong> ${data.name}</span>
-                              <span style="color: #00ff88; font-weight: 800;">${formatTimeMinSec(data.time)}</span>
-                          </div>
-                      `;
+                      html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color: #00ff88; font-weight: 800;">${formatTimeMinSec(data.time)}</span></div>`;
                       rank++;
                   });
                   list.innerHTML = html;
@@ -223,43 +233,45 @@
             db.collection("leaderboards").add({
                 name: name,
                 time: time,
+                difficulty: selectedDifficulty, // GUARDAMOS LA DIFICULTAD TAMBIÉN
                 windowIndex: currentWindow, 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                console.log("¡Récord subido a la nube!");
-            }).catch((error) => {
-                console.error("Error al subir récord: ", error);
             });
         }
-        // ---------------------------------------------------------
 
-        function startGame() {
+        function startGame(diff) {
             const input = document.getElementById("alias-input");
             if (!input.value.trim()) return alert("Por favor, ingresa un alias para registrar tu tiempo.");
+            
             userAlias = input.value.trim();
+            selectedDifficulty = diff; // Guardamos la elección
+            
             document.getElementById("login-screen").style.display = "none";
             document.getElementById("game-content").style.display = "block";
             
+            // Configurar visualmente el badge de dificultad
+            const badge = document.getElementById("diff-badge");
+            badge.innerText = diff;
+            const colors = { "Fácil": "#538d4e", "Normal": "#b59f3b", "Difícil": "#d32f2f" };
+            badge.style.backgroundColor = colors[diff];
+            
             initSession();
-            listenToGlobalLeaderboard(); 
+            listenToGlobalLeaderboard(diff); 
         }
 
         function initSession() {
-            targetPlayer = selectTarget();
+            targetPlayer = selectTarget(); // Filtra basado en la elección
             isTimerRunning = false;
             clearInterval(timerInterval);
             document.getElementById("stopwatch").innerText = "00:00.0";
-            
             gameOver = false;
             guessedIds = [];
             document.getElementById("board").innerHTML = "";
             document.getElementById("player-input").disabled = false;
             document.getElementById("victory-panel").style.display = "none";
-            
             const emptyState = document.getElementById("empty-state");
             emptyState.style.display = "block";
             emptyState.innerText = "Escribe tu primer jugador para arrancar el cronómetro...";
-            
             document.getElementById("player-input").focus();
         }
 
@@ -278,37 +290,38 @@
             }, 100);
         }
 
-        // --- CRONÓMETRO DE ESPERA (COOLDOWN) ---
         function startCooldownTimer() {
-            setInterval(() => {
+            const timerObj = setInterval(() => {
                 const now = Date.now();
                 const nextWindow = (getWindowIndex() + 1) * msPerWindow;
                 const diff = nextWindow - now;
 
-                // Si el tiempo llegó a 0, recargar la página para el nuevo jugador
                 if (diff <= 0) {
-                    location.reload(); 
+                    clearInterval(timerObj);
+                    document.getElementById("cooldown-msg").innerText = "¡MERCADO ABIERTO!";
+                    document.getElementById("cooldown-msg").style.color = "#00ff88";
+                    document.getElementById("cooldown-timer").innerText = "¡YA!";
+                    
+                    // REINICIO AUTOMÁTICO DIVERTIDO
+                    setTimeout(() => {
+                        alert("¡Atención! Ha llegado un nuevo crack al mercado. La página se actualizará para el nuevo reto.");
+                        location.reload(); 
+                    }, 500);
                     return;
                 }
 
                 const m = Math.floor((diff / 1000 / 60) % 60);
                 const s = Math.floor((diff / 1000) % 60);
-                document.getElementById("cooldown-timer").innerText = 
-                    `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                document.getElementById("cooldown-timer").innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
             }, 1000);
         }
 
         function makeGuess(guessed) {
             if (gameOver || guessedIds.includes(guessed.fullName)) return;
-            
             document.getElementById("empty-state").style.display = "none";
             guessedIds.push(guessed.fullName);
             createRow(guessed);
-
-            if (guessed.fullName === targetPlayer.fullName) {
-                endGame(true);
-            }
-            
+            if (guessed.fullName === targetPlayer.fullName) endGame(true);
             let inputField = document.getElementById("player-input");
             inputField.value = "";
             if(!gameOver) inputField.focus(); 
@@ -318,43 +331,28 @@
             gameOver = true;
             clearInterval(timerInterval);
             document.getElementById("player-input").disabled = true;
-            
             const finalTime = (Date.now() - startTime) / 1000;
-            
-            // --- 🚨 FILTRO ANTI-TRAMPAS (MODO INCÓGNITO / CELULAR) 🚨 ---
-            // Si adivina en menos de 4.5 segundos en su PRIMER intento...
+
             if (finalTime < 4.5 && guessedIds.length === 1) {
-                // Bloquear el dispositivo igualmente para que no siga intentando
                 localStorage.setItem("futguess_played_window", getWindowIndex());
                 startCooldownTimer(); 
-                
-                // Mostrar panel de "Cazado"
                 document.getElementById("victory-title").innerText = "🚨 ¡TRAMPOSO DETECTADO! 🚨";
-                document.getElementById("victory-title").style.color = "#ff4d4d"; // Rojo alerta
+                document.getElementById("victory-title").style.color = "#ff4d4d";
                 document.getElementById("victory-panel").style.borderColor = "#ff4d4d";
                 document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)} (Anulado)`;
-                document.getElementById("victory-phrase").innerText = '"¿Usando modo incógnito o mirando en otro celular, eh? Ese tiempo es humanamente imposible. Tu récord NO será guardado en el ranking mundial."';
-                document.getElementById("victory-phrase").style.color = "#ffaa00"; 
+                document.getElementById("victory-phrase").innerText = '"¡Buen intento, pero ese tiempo es de otro planeta! Tu récord no se guardará."';
                 document.getElementById("victory-panel").style.display = "block";
-                
-                return; // ⛔ ESTO ES CLAVE: Corta la función aquí para que NO llame a saveScoreGlobal()
+                return;
             }
-            // -------------------------------------------------------------
             
-            // Si el tiempo es legal, continúa normalmente:
             saveScoreGlobal(userAlias, finalTime);
-            
-            // PONER EL CANDADO EN ESTE DISPOSITIVO
             localStorage.setItem("futguess_played_window", getWindowIndex());
-            startCooldownTimer(); // Iniciar el cronómetro de la próxima ronda
+            startCooldownTimer();
             
             const fraseRandom = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
             document.getElementById("victory-title").innerText = "🏆 ¡VICTORIA! 🏆";
-            document.getElementById("victory-title").style.color = "#00ff88"; 
-            document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
             document.getElementById("victory-phrase").innerText = `"${fraseRandom}"`;
-            document.getElementById("victory-phrase").style.color = "#ddd"; 
             document.getElementById("victory-panel").style.display = "block";
         }
 
@@ -393,7 +391,6 @@
                 isTimerRunning = true;
                 startTime = Date.now();
                 startStopwatch();
-                
                 const emptyState = document.getElementById("empty-state");
                 if (emptyState) {
                     emptyState.innerText = "¡El reloj está corriendo! Adivina rápido...";
@@ -421,9 +418,7 @@
         });
 
         document.addEventListener("click", function(e) {
-            if (e.target !== inputEl && e.target !== suggsEl) {
-                suggsEl.style.display = "none";
-            }
+            if (e.target !== inputEl && e.target !== suggsEl) suggsEl.style.display = "none";
         });
     </script>
 </body>
