@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FutGuess: Speed Challenge</title>
+    <style>
+        /* FUENTE INTER Y ESTILOS */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121213;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            letter-spacing: -0.01em;
+            min-height: 100vh;
+        }
+
+        /* TÍTULOS Y CABECERA */
+        .header-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 { 
+            color: #00ff88; 
+            margin: 0 0 10px 0; 
+            letter-spacing: 4px; 
+            text-transform: uppercase; 
+            font-weight: 900; 
+            font-size: 2.5rem;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .badge-2026 {
+            background-color: #00ff88;
+            color: #121213;
+            font-size: 0.9rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            font-weight: 900;
+            text-shadow: none;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .subtitle {
+            color: #e0e0e0;
+            font-size: 1.05rem;
+            margin: 0 0 5px 0;
+            font-weight: 500;
+        }
+
+        .rules-text {
+            color: #777;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .rules-text span {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* PANTALLA DE ALIAS */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18, 18, 19, 0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100;
+        }
+        .login-box {
+            background: #2d2d30; padding: 40px; border-radius: 20px;
+            border: 2px solid #3a3a3c; text-align: center; max-width: 400px; width: 90%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        /* COMPONENTES DE INTERFAZ */
+        #game-content { display: none; width: 100%; max-width: 780px; text-align: center; }
+        
+        input[type="text"] {
+            width: 100%; padding: 15px; background-color: #2d2d30;
+            color: white; border: 2px solid #3a3a3c; border-radius: 12px;
+            font-size: 1.1rem; text-align: center; box-sizing: border-box; margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus { outline: none; border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.1); }
+
+        button {
+            padding: 15px 30px; background-color: #00ff88; color: #121213;
+            font-weight: 900; border: none; border-radius: 12px; cursor: pointer; width: 100%;
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
+        }
+        button:hover { background-color: #00cc6a; transform: translateY(-2px); }
+
+        #stopwatch { 
+            font-size: 3.5rem; 
+            color: #00ff88; 
+            font-weight: 900; 
+            margin: 10px 0 25px 0; 
+            font-variant-numeric: tabular-nums; 
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        /* TABLA DE JUGADORES Y ZONA DELIMITADA */
+        #board-container { width: 100%; margin-top: 10px; overflow-x: auto; }
+        
+        .row-header { 
+            display: grid; 
+            grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 12px; 
+            min-width: 680px; 
+            font-size: 0.8rem; 
+            color: #888; 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+        }
+        
+        #board-wrapper {
+            background: rgba(30, 30, 32, 0.3);
+            border: 2px dashed #3a3a3c;
+            border-radius: 12px;
+            padding: 20px; 
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* SEPARACIÓN VERTICAL AUMENTADA */
+            position: relative;
+        }
+
+        .empty-state {
+            color: #555;
+            font-size: 1rem;
+            padding: 45px 0;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .row { 
+            display: grid; 
+            grid-template-columns: 2.2fr 1.2fr 1.5fr 1.2fr 0.8fr 1fr; 
+            gap: 10px; 
+            min-width: 680px; 
+        }
+        
+        .box { 
+            background-color: #262629; 
+            border: 1px solid #222; 
+            padding: 12px 5px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            animation: flipIn 0.5s ease forwards; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+        }
+        
+        @keyframes flipIn { 0% { transform: rotateX(-90deg); opacity: 0; } 100% { transform: rotateX(0); opacity: 1; } }
+        .correct { background-color: #538d4e !important; border-color: #43753e !important; }
+        .incorrect { background-color: #d32f2f !important; border-color: #b72424 !important; }
+
+        /* MENSAJE DE VICTORIA EN PÁGINA */
+        #victory-panel {
+            display: none;
+            background: linear-gradient(145deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            box-shadow: 0 10px 30px rgba(0,255,136,0.1);
+        }
+        @keyframes bounceIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        #victory-panel h2 { color: #00ff88; margin: 0 0 10px 0; letter-spacing: 2px; font-size: 1.8rem; text-shadow: 0 0 10px rgba(0,255,136,0.4); }
+        #victory-time { font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; }
+        #victory-phrase { font-style: italic; color: #ddd; font-size: 1rem; line-height: 1.4; }
+
+        /* LEADERBOARD */
+        #leaderboard {
+            margin-top: 35px; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto;
+            background: #1e1e20; border-radius: 15px; padding: 25px; border: 1px solid #3a3a3c;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        #leaderboard h3 { color: #00ff88; margin-top: 0; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1.5px; text-align: center; border-bottom: 1px solid #3a3a3c; padding-bottom: 15px;}
+        .lb-entry { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d2d30; font-size: 0.95rem; }
+        .lb-entry:last-child { border-bottom: none; }
+
+        #suggestions {
+            display: none; position: absolute; width: 100%; background: #2d2d30;
+            border: 2px solid #00ff88; border-radius: 0 0 12px 12px; z-index: 10;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .suggestion-item { padding: 12px 15px; cursor: pointer; text-align: left; border-bottom: 1px solid #3a3a3c; transition: 0.2s;}
+        .suggestion-item:hover { background: #3a3a3c; padding-left: 20px; }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            padding: 30px 0 10px 0;
+            color: #444;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h1 style="font-size: 2.2rem; margin-bottom: 5px;">FutGuess</h1>
+            <p style="color: #aaa; font-size: 0.95rem; margin-bottom: 25px;">El reloj empezará a correr cuando escribas tu primer intento.</p>
+            <input type="text" id="alias-input" placeholder="Ingresa tu alias o apodo..." maxlength="15">
+            <button onclick="startGame()">Comenzar Reto</button>
+        </div>
+    </div>
+
+    <div id="game-content">
+        
+        <div class="header-container">
+            <h1>FutGuess <span class="badge-2026">2026</span></h1>
+            <p class="subtitle">Adivina al crack mundial en tiempo récord.</p>
+            <p class="rules-text">Base de datos élite • Nuevo misterio cada <span>15 MINUTOS</span></p>
+        </div>
+
+        <div id="stopwatch">00:00.0</div>
+        
+        <div style="position: relative;">
+            <input type="text" id="player-input" placeholder="Escribe un jugador aquí..." autocomplete="off">
+            <div id="suggestions"></div>
+        </div>
+
+        <div id="victory-panel">
+            <h2>🏆 ¡VICTORIA! 🏆</h2>
+            <div id="victory-time"></div>
+            <div id="victory-phrase"></div>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 15px; font-weight: bold;">El próximo jugador estará disponible en el siguiente ciclo de 15 minutos.</p>
+        </div>
+
+        <div id="board-container">
+            <div class="row-header">
+                <div>Jugador</div><div>Liga</div><div>Club</div><div>País</div><div>Pos</div><div>Edad</div>
+            </div>
+            <div id="board-wrapper">
+                <div id="empty-state" class="empty-state">Escribe tu primer jugador para arrancar el cronómetro...</div>
+                <div id="board"></div>
+            </div>
+        </div>
+
+        <div id="leaderboard">
+            <h3>🏆 Mejores Tiempos 🏆</h3>
+            <div id="lb-list"></div>
+        </div>
+
+    </div>
+
+    <div class="footer">¿Crees saber de fútbol? Demuéstralo.</div>
+
+    <script src="database.js"></script>
+
+    <script>
+        let targetPlayer = null;
+        let startTime = null;
+        let timerInterval = null;
+        let userAlias = "";
+        let gameOver = false;
+        let guessedIds = [];
+        let isTimerRunning = false; // Variable para controlar si el reloj ya arrancó
+
+        const msPerWindow = 1000 * 60 * 15; // 15 Minutos
+
+        // Frases graciosas / Beef para cuando ganan
+        const frasesVictoria = [
+            "¡Ni Pep Guardiola lo hubiera adivinado tan rápido!",
+            "¿Acaso eres ojeador del Football Manager? Buenísima.",
+            "Demasiado fácil para ti, puro trámite.",
+            "Esa visión de juego no la tiene ni De Bruyne.",
+            "Tardaste un poco... ¿estabas buscando en Transfermarkt o qué?",
+            "¡Ojo! Tenemos al nuevo Maldini de los datos.",
+            "Ganaste, pero mi abuela lo adivinaba en la mitad de tiempo.",
+            "Pura suerte y lo sabes. Te reto en 15 minutos.",
+            "El verdadero 'The Special One' está en la sala.",
+            "Ni el VAR te quitaba este acierto. ¡Puro talento!",
+            "Esa victoria estuvo más sufrida que partido del Cholo Simeone."
+        ];
+
+        function getWindowIndex() { return Math.floor(Date.now() / msPerWindow); }
+
+        function selectTarget() {
+            const windowIdx = getWindowIndex();
+            let seed = (windowIdx * 16807) % 2147483647;
+            return players[seed % players.length];
+        }
+
+        function startGame() {
+            const input = document.getElementById("alias-input");
+            if (!input.value.trim()) return alert("Por favor, ingresa un alias para registrar tu tiempo.");
+            
+            userAlias = input.value.trim();
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("game-content").style.display = "block";
+            
+            initSession();
+        }
+
+        function initSession() {
+            targetPlayer = selectTarget();
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById("stopwatch").innerText = "00:00.0";
+            
+            gameOver = false;
+            guessedIds = [];
+            document.getElementById("board").innerHTML = "";
+            document.getElementById("player-input").disabled = false;
+            document.getElementById("victory-panel").style.display = "none";
+            
+            const emptyState = document.getElementById("empty-state");
+            emptyState.style.display = "block";
+            emptyState.innerText = "Escribe tu primer jugador para arrancar el cronómetro...";
+            
+            updateLeaderboardUI();
+            
+            // Focus automático al input para estar listos
+            document.getElementById("player-input").focus();
+        }
+
+        function formatTimeMinSec(totalSeconds) {
+            const m = Math.floor(totalSeconds / 60);
+            const s = Math.floor(totalSeconds % 60);
+            const ms = Math.floor((totalSeconds % 1) * 10);
+            return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}.${ms}`;
+        }
+
+        function startStopwatch() {
+            timerInterval = setInterval(() => {
+                const diff = Date.now() - startTime;
+                const totalSecs = diff / 1000;
+                document.getElementById("stopwatch").innerText = formatTimeMinSec(totalSecs);
+            }, 100);
+        }
+
+        function makeGuess(guessed) {
+            if (gameOver || guessedIds.includes(guessed.fullName)) return;
+            
+            document.getElementById("empty-state").style.display = "none";
+
+            guessedIds.push(guessed.fullName);
+            createRow(guessed);
+
+            if (guessed.fullName === targetPlayer.fullName) {
+                endGame(true);
+            }
+            
+            let inputField = document.getElementById("player-input");
+            inputField.value = "";
+            if(!gameOver) inputField.focus(); // Mantener el focus para seguir escribiendo rápido
+        }
+
+        function endGame(won) {
+            gameOver = true;
+            clearInterval(timerInterval);
+            document.getElementById("player-input").disabled = true;
+            
+            const finalTime = (Date.now() - startTime) / 1000;
+            saveScore(userAlias, finalTime);
+            updateLeaderboardUI();
+            
+            const fraseRandom = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
+            document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
+            document.getElementById("victory-phrase").innerText = `"${fraseRandom}"`;
+            document.getElementById("victory-panel").style.display = "block";
+        }
+
+        function saveScore(name, time) {
+            let scores = JSON.parse(localStorage.getItem("amcdle_leaderboard") || "[]");
+            scores.push({ name, time });
+            scores.sort((a, b) => a.time - b.time);
+            localStorage.setItem("amcdle_leaderboard", JSON.stringify(scores.slice(0, 10)));
+        }
+
+        function updateLeaderboardUI() {
+            const list = document.getElementById("lb-list");
+            const scores = JSON.parse(localStorage.getItem("amcdle_leaderboard") || "[]");
+            
+            if (scores.length === 0) {
+                list.innerHTML = "<div style='color: #666; text-align: center; font-style: italic; padding: 10px 0;'>Aún no hay tiempos registrados. ¡Sé el primero en dominar la tabla!</div>";
+                return;
+            }
+
+            list.innerHTML = scores.map((s, i) => `
+                <div class="lb-entry">
+                    <span><strong>${i+1}.</strong> ${s.name}</span>
+                    <span style="color: #00ff88; font-weight: 800;">${formatTimeMinSec(s.time)}</span>
+                </div>
+            `).join("");
+        }
+
+        function createRow(char) {
+            const row = document.createElement("div");
+            row.classList.add("row");
+            const fields = [
+                { v: char.fullName, t: targetPlayer.fullName },
+                { v: char.league, t: targetPlayer.league },
+                { v: char.club, t: targetPlayer.club },
+                { v: char.country, t: targetPlayer.country },
+                { v: char.position, t: targetPlayer.position },
+                { v: char.age, t: targetPlayer.age, isAge: true }
+            ];
+
+            fields.forEach((f, i) => {
+                const box = document.createElement("div");
+                box.className = "box " + (f.v === f.t ? "correct" : "incorrect");
+                box.style.animationDelay = `${i * 0.1}s`;
+                if (f.isAge) {
+                    const arrow = f.v > f.t ? "⬇️" : f.v < f.t ? "⬆️" : "";
+                    box.innerText = `${f.v} ${arrow}`;
+                } else {
+                    box.innerText = f.v;
+                }
+                row.appendChild(box);
+            });
+            document.getElementById("board").prepend(row);
+        }
+
+        // BUSCADOR MEJORADO Y ARRANQUE DEL RELOJ
+        const inputEl = document.getElementById("player-input");
+        const suggsEl = document.getElementById("suggestions");
+
+        inputEl.addEventListener("input", function() {
+            // Si el cronómetro no ha arrancado y el juego no ha terminado, arráncalo con la primera letra
+            if (!isTimerRunning && !gameOver && this.value.trim() !== "") {
+                isTimerRunning = true;
+                startTime = Date.now();
+                startStopwatch();
+                
+                const emptyState = document.getElementById("empty-state");
+                if (emptyState) {
+                    emptyState.innerText = "¡El reloj está corriendo! Adivina rápido...";
+                    emptyState.style.color = "#00ff88"; // Le damos un toquecito visual para avisar
+                }
+            }
+
+            const val = this.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            suggsEl.innerHTML = "";
+            if (!val) { suggsEl.style.display = "none"; return; }
+
+            const matches = players.filter(p => {
+                const normName = p.fullName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                return normName.includes(val) && !guessedIds.includes(p.fullName);
+            }).slice(0, 8);
+
+            matches.forEach(m => {
+                const div = document.createElement("div");
+                div.className = "suggestion-item";
+                div.innerHTML = `<strong>${m.fullName}</strong> <small style="color:#777">(${m.club})</small>`;
+                div.onclick = () => { makeGuess(m); suggsEl.style.display = "none"; };
+                suggsEl.appendChild(div);
+            });
+            suggsEl.style.display = matches.length ? "block" : "none";
+        });
+
+        // Ocultar buscador si das clic fuera
+        document.addEventListener("click", function(e) {
+            if (e.target !== inputEl && e.target !== suggsEl) {
+                suggsEl.style.display = "none";
+            }
+        });
+
+    </script>
+</body>
+</html>
