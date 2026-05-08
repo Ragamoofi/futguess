@@ -321,6 +321,27 @@
             
             const finalTime = (Date.now() - startTime) / 1000;
             
+            // --- 🚨 FILTRO ANTI-TRAMPAS (MODO INCÓGNITO / CELULAR) 🚨 ---
+            // Si adivina en menos de 4.5 segundos en su PRIMER intento...
+            if (finalTime < 4.5 && guessedIds.length === 1) {
+                // Bloquear el dispositivo igualmente para que no siga intentando
+                localStorage.setItem("futguess_played_window", getWindowIndex());
+                startCooldownTimer(); 
+                
+                // Mostrar panel de "Cazado"
+                document.getElementById("victory-title").innerText = "🚨 ¡TRAMPOSO DETECTADO! 🚨";
+                document.getElementById("victory-title").style.color = "#ff4d4d"; // Rojo alerta
+                document.getElementById("victory-panel").style.borderColor = "#ff4d4d";
+                document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)} (Anulado)`;
+                document.getElementById("victory-phrase").innerText = '"¿Usando modo incógnito o mirando en otro celular, eh? Ese tiempo es humanamente imposible. Tu récord NO será guardado en el ranking mundial."';
+                document.getElementById("victory-phrase").style.color = "#ffaa00"; 
+                document.getElementById("victory-panel").style.display = "block";
+                
+                return; // ⛔ ESTO ES CLAVE: Corta la función aquí para que NO llame a saveScoreGlobal()
+            }
+            // -------------------------------------------------------------
+            
+            // Si el tiempo es legal, continúa normalmente:
             saveScoreGlobal(userAlias, finalTime);
             
             // PONER EL CANDADO EN ESTE DISPOSITIVO
@@ -328,8 +349,12 @@
             startCooldownTimer(); // Iniciar el cronómetro de la próxima ronda
             
             const fraseRandom = frasesVictoria[Math.floor(Math.random() * frasesVictoria.length)];
+            document.getElementById("victory-title").innerText = "🏆 ¡VICTORIA! 🏆";
+            document.getElementById("victory-title").style.color = "#00ff88"; 
+            document.getElementById("victory-panel").style.borderColor = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
             document.getElementById("victory-phrase").innerText = `"${fraseRandom}"`;
+            document.getElementById("victory-phrase").style.color = "#ddd"; 
             document.getElementById("victory-panel").style.display = "block";
         }
 
