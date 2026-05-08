@@ -88,7 +88,6 @@
         .correct { background-color: #538d4e !important; }
         .incorrect { background-color: #d32f2f !important; }
         
-        /* PANEL VICTORIA / ALERTA */
         #victory-panel { display: none; background: linear-gradient(145deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%); border: 2px solid #00ff88; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 500px; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
         
         /* LEADERBOARD CENTRADO */
@@ -154,7 +153,7 @@
         </div>
 
         <div id="leaderboard">
-            <h3 id="lb-title-header">🏆 Mejores Tiempos 🏆</h3>
+            <h3 id="lb-title-header">🏆 TOP 10 HISTÓRICO 🏆</h3>
             <div id="lb-list"><div class="lb-entry loading">Cargando base mundial...</div></div>
         </div>
     </div>
@@ -262,9 +261,7 @@
             const finalTime = (Date.now() - startTime) / 1000;
             const vPanel = document.getElementById("victory-panel");
             const vTitle = document.getElementById("victory-title");
-            const vPhrase = document.getElementById("victory-phrase");
 
-            // --- 🚨 LÓGICA ANTI-TRAMPAS (RESTAURADA) 🚨 ---
             if (finalTime < 4.5 && guessedIds.length === 1) {
                 localStorage.setItem("futguess_played_window", getWindowIndex());
                 startCooldownTimer();
@@ -272,13 +269,11 @@
                 vTitle.style.color = "#ff4d4d";
                 vPanel.style.borderColor = "#ff4d4d";
                 document.getElementById("victory-time").innerText = `⏱️ Tiempo: ${formatTimeMinSec(finalTime)} (ANULADO)`;
-                vPhrase.innerText = '"Ese tiempo es humanamente imposible. El VAR ha anulado tu récord por sospecha de trampa."';
-                vPhrase.style.color = "#ffaa00";
+                document.getElementById("victory-phrase").innerText = "Ese tiempo es humanamente imposible.";
                 vPanel.style.display = "block";
-                return; // ⛔ NO GUARDA EN FIREBASE
+                return;
             }
 
-            // GUARDADO NORMAL
             saveScoreGlobal(userAlias, finalTime);
             localStorage.setItem("futguess_played_window", getWindowIndex());
             startCooldownTimer();
@@ -286,28 +281,38 @@
             vTitle.style.color = "#00ff88";
             vPanel.style.borderColor = "#00ff88";
             document.getElementById("victory-time").innerText = `⏱️ Tu tiempo oficial: ${formatTimeMinSec(finalTime)}`;
-            vPhrase.innerText = "¡Eres un experto de los datos!";
-            vPhrase.style.color = "#bbb";
+            document.getElementById("victory-phrase").innerText = "¡Eres un crack de los datos!";
             vPanel.style.display = "block";
         }
 
+        // --- LÓGICA DE RANKING HISTÓRICO (PERMANENTE) ---
         function listenToGlobalLeaderboard(diff) {
-            document.getElementById("lb-title-header").innerText = `🏆 Top 10 (${diff}) 🏆`;
-            db.collection("leaderboards").where("windowIndex", "==", getWindowIndex()).where("difficulty", "==", diff).orderBy("time", "asc").limit(10).onSnapshot((snapshot) => {
-                const list = document.getElementById("lb-list");
-                if (snapshot.empty) { list.innerHTML = "<div class='empty-state' style='padding:10px 0;'>Sin récords aún.</div>"; return; }
-                let html = ""; let rank = 1;
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color:#00ff88; font-weight:800;">${formatTimeMinSec(data.time)}</span></div>`;
-                    rank++;
-                });
-                list.innerHTML = html;
-            });
+            document.getElementById("lb-title-header").innerText = `🏆 TOP 10 HISTÓRICO (${diff}) 🏆`;
+            
+            db.collection("leaderboards")
+              .where("difficulty", "==", diff) // Quitamos el filtro de windowIndex
+              .orderBy("time", "asc")
+              .limit(10)
+              .onSnapshot((snapshot) => {
+                  const list = document.getElementById("lb-list");
+                  if (snapshot.empty) { list.innerHTML = "<div class='empty-state' style='padding:10px 0;'>Sin récords históricos aún.</div>"; return; }
+                  let html = ""; let rank = 1;
+                  snapshot.forEach((doc) => {
+                      const data = doc.data();
+                      html += `<div class="lb-entry"><span><strong>${rank}.</strong> ${data.name}</span><span style="color:#00ff88; font-weight:800;">${formatTimeMinSec(data.time)}</span></div>`;
+                      rank++;
+                  });
+                  list.innerHTML = html;
+              });
         }
 
         function saveScoreGlobal(name, time) {
-            db.collection("leaderboards").add({ name, time, difficulty: selectedDifficulty, windowIndex: getWindowIndex(), timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            db.collection("leaderboards").add({ 
+                name, 
+                time, 
+                difficulty: selectedDifficulty, 
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+            });
         }
 
         function formatTimeMinSec(totalSeconds) {
